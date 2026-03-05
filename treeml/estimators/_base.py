@@ -20,12 +20,36 @@ class PhyloBaseEstimator(BaseEstimator):
         self.include_eigenvectors = include_eigenvectors
         self.eigenvector_variance = eigenvector_variance
 
+    @staticmethod
+    def _validate_tree(tree):
+        """Warn about tree issues that affect phylogenetic correction."""
+        root = tree.root
+        if len(root.clades) > 2:
+            warnings.warn(
+                "Tree root has more than 2 children, which suggests an "
+                "unrooted tree. Phylogenetic correction depends on root "
+                "placement — consider rooting the tree first.",
+                UserWarning,
+                stacklevel=4,
+            )
+        terminals = tree.get_terminals()
+        missing = [t.name for t in terminals if t.branch_length is None]
+        if missing:
+            warnings.warn(
+                f"Tree has {len(missing)} terminal(s) with missing branch "
+                f"lengths (e.g., {missing[0]!r}). This will produce "
+                f"incorrect phylogenetic corrections.",
+                UserWarning,
+                stacklevel=4,
+            )
+
     def _build_vcv(
         self,
         tree,
         ordered_names: List[str],
         gene_trees: Optional[List] = None,
     ) -> np.ndarray:
+        self._validate_tree(tree)
         self.tree_ = tree
         self.species_names_ = list(ordered_names)
         self.gene_trees_ = gene_trees

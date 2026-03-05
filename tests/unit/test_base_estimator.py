@@ -85,3 +85,37 @@ def test_fit_stores_gene_trees():
     model.fit(X, y, tree=tree, species_names=names, gene_trees=gt)
 
     assert model.gene_trees_ is gt
+
+
+def test_warn_unrooted_tree():
+    """Warn when tree root has >2 children (likely unrooted)."""
+    import pytest
+    nwk = "(A:1.0,B:1.0,(C:1.0,D:1.0):1.0);"
+    tree = Phylo.read(StringIO(nwk), "newick")
+    names = ["A", "B", "C", "D"]
+    est = PhyloBaseEstimator()
+    with pytest.warns(UserWarning, match="unrooted"):
+        est._build_vcv(tree, names)
+
+
+def test_warn_missing_branch_lengths():
+    """Warn when terminals have missing branch lengths."""
+    import pytest
+    nwk = "((A,B):1.0,(C:1.0,D:1.0):1.0);"
+    tree = Phylo.read(StringIO(nwk), "newick")
+    names = ["A", "B", "C", "D"]
+    est = PhyloBaseEstimator()
+    with pytest.warns(UserWarning, match="missing branch"):
+        est._build_vcv(tree, names)
+
+
+def test_no_warn_rooted_tree_with_branch_lengths():
+    """No warning for a properly rooted tree with all branch lengths."""
+    import warnings
+    nwk = "((A:1.0,B:1.0):1.0,(C:1.0,D:1.0):1.0);"
+    tree = Phylo.read(StringIO(nwk), "newick")
+    names = ["A", "B", "C", "D"]
+    est = PhyloBaseEstimator()
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        est._build_vcv(tree, names)
