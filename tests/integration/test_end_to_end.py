@@ -22,6 +22,8 @@ from treeml import (
     phylo_feature_importance,
     phylo_shap,
     PhyloSHAPResult,
+    PhyloGridSearchCV,
+    PhyloRandomizedSearchCV,
     load_data,
 )
 
@@ -427,3 +429,44 @@ class TestPhyloSHAPEndToEnd:
         result = phylo_shap(clf, X)
         assert isinstance(result, PhyloSHAPResult)
         assert result.shap_values.shape[0] == X.shape[0]
+
+
+@pytest.mark.integration
+class TestPhyloGridSearchEndToEnd:
+    def test_grid_search_regression(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="brain_size",
+        )
+        search = PhyloGridSearchCV(
+            estimator=PhyloRandomForestRegressor(random_state=42),
+            param_grid={"n_estimators": [10, 50]},
+            tree=tree,
+            species_names=names,
+            cv=3,
+        )
+        search.fit(X, y)
+        assert isinstance(search.best_estimator_, PhyloRandomForestRegressor)
+        preds = search.predict(X)
+        assert preds.shape == y.shape
+
+    def test_randomized_search_regression(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="brain_size",
+        )
+        search = PhyloRandomizedSearchCV(
+            estimator=PhyloRidge(),
+            param_distributions={"alpha": [0.1, 1.0, 10.0]},
+            n_iter=2,
+            tree=tree,
+            species_names=names,
+            cv=3,
+            random_state=42,
+        )
+        search.fit(X, y)
+        assert hasattr(search, "best_params_")
+        preds = search.predict(X)
+        assert preds.shape == y.shape

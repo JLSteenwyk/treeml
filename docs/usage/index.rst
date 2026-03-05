@@ -67,6 +67,38 @@ Model Comparison
 
 - ``phylo_model_comparison()`` -- Compare multiple estimators with and without phylogenetic correction
 
+Hyperparameter Tuning
+~~~~~~~~~~~~~~~~~~~~~
+
+- ``PhyloGridSearchCV`` -- Grid search with phylogenetic cross-validation
+- ``PhyloRandomizedSearchCV`` -- Randomized search with phylogenetic cross-validation
+
+Example usage:
+
+.. code-block:: python
+
+   from treeml import PhyloRandomForestRegressor, PhyloGridSearchCV
+
+   model = PhyloRandomForestRegressor(random_state=42)
+
+   search = PhyloGridSearchCV(
+       estimator=model,
+       param_grid={
+           "n_estimators": [50, 100, 200],
+           "eigenvector_variance": [0.8, 0.9, 0.95],
+       },
+       tree=tree,
+       species_names=names,
+       n_jobs=-1,
+   )
+   search.fit(X, y)
+
+   print(f"Best params: {search.best_params_}")
+   print(f"Best score: {search.best_score_:.3f}")
+
+   # Predict with best model
+   preds = search.predict(X)
+
 Data Loading
 ~~~~~~~~~~~~
 

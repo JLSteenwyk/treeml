@@ -12,6 +12,7 @@ from treeml.estimators._ridge import PhyloRidge
 from treeml.estimators._lasso import PhyloLasso
 from treeml.cv._distance import PhyloDistanceCV
 from treeml.cv._clade import PhyloCladeCV
+from treeml.cv._search import PhyloGridSearchCV, PhyloRandomizedSearchCV
 from treeml.importance._report import phylo_feature_importance
 from treeml.comparison._compare import phylo_model_comparison
 from treeml.shap._shap import phylo_shap, PhyloSHAPResult
@@ -32,6 +33,8 @@ __all__ = [
     "PhyloLasso",
     "PhyloDistanceCV",
     "PhyloCladeCV",
+    "PhyloGridSearchCV",
+    "PhyloRandomizedSearchCV",
     "phylo_feature_importance",
     "phylo_model_comparison",
     "phylo_shap",
