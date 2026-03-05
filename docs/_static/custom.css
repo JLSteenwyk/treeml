@@ -1,0 +1,33 @@
+div.document {
+    width: 100%;
+    max-width: 1200px;
+}
+
+body {
+    font-family: Oxygen, 'goudy old style', 'minion pro', 'bell mt', Georgia, 'Hiragino Mincho Pro', serif;
+}
+
+.highlight {
+    margin-top: 25px;
+}
+
+pre {
+    background-color: #EEE;
+    color: #333;
+    padding: 1.25em 30px;
+}
+
+.highlight pre {
+    font-size: smaller;
+}
+
+div.body h1,
+div.body h2,
+div.body h3,
+div.body h4,
+div.body h5,
+div.body h6 {
+    font-family: Oxygen, 'goudy old style', serif;
+    font-weight: bold;
+    color: #444;
+}
