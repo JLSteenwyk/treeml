@@ -1,9 +1,13 @@
+import re
 from os import path
 from setuptools import setup, find_packages
 
-from treeml.version import __version__
-
 here = path.abspath(path.dirname(__file__))
+
+# Read version without importing treeml (avoids triggering full import chain
+# before dependencies are installed)
+with open(path.join(here, "treeml", "version.py")) as f:
+    __version__ = re.search(r'__version__\s*=\s*"(.+?)"', f.read()).group(1)
 
 with open(path.join(here, "README.md")) as f:
     long_description = f.read()
@@ -23,6 +27,7 @@ REQUIRES = [
     "numpy>=1.24.0",
     "scipy>=1.11.3",
     "scikit-learn>=1.4.2",
+    "pandas>=2.0.0",
 ]
 
 setup(
