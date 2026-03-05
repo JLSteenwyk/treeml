@@ -1,0 +1,47 @@
+name: CI
+on: push
+jobs:
+  test:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+    - uses: actions/checkout@master
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@master
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        pip install setuptools
+        pip install -r requirements.txt
+        make install
+        pip install -r tests/requirements.txt
+    - name: Run tests
+      run: |
+        make test
+    - name: Generate coverage report
+      if: ${{ matrix.python-version == '3.11' }}
+      run: |
+        make test.coverage
+    - name: Upload unit test coverage to Codecov
+      if: ${{ matrix.python-version == '3.11' }}
+      uses: codecov/codecov-action@v1.0.7
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./unit.coverage.xml
+        flags: unit
+        env_vars: PYTHON
+        name: codecov-unit
+        fail_ci_if_error: false
+    - name: Upload integration test coverage to Codecov
+      if: ${{ matrix.python-version == '3.11' }}
+      uses: codecov/codecov-action@v1.0.7
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./integration.coverage.xml
+        flags: integration
+        env_vars: PYTHON
+        name: codecov-integration
+        fail_ci_if_error: false
