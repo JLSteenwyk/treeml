@@ -99,6 +99,28 @@ Example usage:
    # Predict with best model
    preds = search.predict(X)
 
+Serialization
+~~~~~~~~~~~~~
+
+- ``save_model()`` -- Save a fitted treeml estimator to disk
+- ``load_model()`` -- Load a treeml estimator from disk
+
+Example usage:
+
+.. code-block:: python
+
+   from treeml import PhyloRandomForestRegressor, save_model, load_model
+
+   model = PhyloRandomForestRegressor(n_estimators=100)
+   model.fit(X, y, tree=tree, species_names=names)
+
+   # Save
+   save_model(model, "my_model.treeml")
+
+   # Load
+   loaded = load_model("my_model.treeml")
+   preds = loaded.predict(X, tree=tree, species_names=names)
+
 Data Loading
 ~~~~~~~~~~~~
 

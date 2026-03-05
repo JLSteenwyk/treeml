@@ -53,6 +53,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#shap-explanations">SHAP Explanations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#model-comparison">Model Comparison</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#hyperparameter-tuning">Hyperparameter Tuning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#serialization">Serialization</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#data-loading">Data Loading</a></li>
 </ul>
 </li>
@@ -184,6 +185,27 @@
 
 <span class="c1"># Predict with best model</span>
 <span class="n">preds</span> <span class="o">=</span> <span class="n">search</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="serialization">
+<h3>Serialization<a class="headerlink" href="#serialization" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">save_model()</span></code> -- Save a fitted treeml estimator to disk</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">load_model()</span></code> -- Load a treeml estimator from disk</p></li>
+</ul>
+<p>Example usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">,</span> <span class="n">save_model</span><span class="p">,</span> <span class="n">load_model</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+
+<span class="c1"># Save</span>
+<span class="n">save_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;my_model.treeml&quot;</span><span class="p">)</span>
+
+<span class="c1"># Load</span>
+<span class="n">loaded</span> <span class="o">=</span> <span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;my_model.treeml&quot;</span><span class="p">)</span>
+<span class="n">preds</span> <span class="o">=</span> <span class="n">loaded</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
