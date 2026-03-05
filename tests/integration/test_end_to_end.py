@@ -470,3 +470,26 @@ class TestPhyloGridSearchEndToEnd:
         assert hasattr(search, "best_params_")
         preds = search.predict(X)
         assert preds.shape == y.shape
+
+
+@pytest.mark.integration
+class TestSerializationEndToEnd:
+    def test_save_load_full_workflow(self, tmp_path):
+        from treeml import PhyloRandomForestRegressor, save_model, load_model
+
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="brain_size",
+        )
+        model = PhyloRandomForestRegressor(n_estimators=50, random_state=42)
+        model.fit(X, y, tree=tree, species_names=names)
+        preds_before = model.predict(X, tree=tree, species_names=names)
+
+        path = tmp_path / "e2e_model.treeml"
+        save_model(model, str(path))
+        loaded = load_model(str(path))
+
+        preds_after = loaded.predict(X, tree=tree, species_names=names)
+        np.testing.assert_array_almost_equal(preds_before, preds_after)
+        assert loaded.species_names_ == names

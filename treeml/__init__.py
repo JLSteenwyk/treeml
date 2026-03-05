@@ -17,6 +17,7 @@ from treeml.importance._report import phylo_feature_importance
 from treeml.comparison._compare import phylo_model_comparison
 from treeml.shap._shap import phylo_shap, PhyloSHAPResult
 from treeml._io import load_data
+from treeml._serialization import save_model, load_model
 
 __all__ = [
     "__version__",
@@ -40,4 +41,6 @@ __all__ = [
     "phylo_shap",
     "PhyloSHAPResult",
     "load_data",
+    "save_model",
+    "load_model",
 ]
