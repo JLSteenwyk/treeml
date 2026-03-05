@@ -50,6 +50,9 @@
 <li class="toctree-l3"><a class="reference internal" href="#estimators">Estimators</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#cross-validation">Cross-Validation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#feature-importance">Feature Importance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#shap-explanations">SHAP Explanations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model-comparison">Model Comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hyperparameter-tuning">Hyperparameter Tuning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#data-loading">Data Loading</a></li>
 </ul>
 </li>
@@ -92,6 +95,15 @@
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">PhyloRandomForestRegressor</span></code> -- Random Forest regressor with phylogenetic correction</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">PhyloRandomForestClassifier</span></code> -- Random Forest classifier with phylogenetic eigenvector features</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloGradientBoostingRegressor</span></code> -- Gradient Boosting regressor with phylogenetic correction</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloGradientBoostingClassifier</span></code> -- Gradient Boosting classifier with phylogenetic eigenvector features</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloSVMRegressor</span></code> -- SVM regressor with phylogenetic correction</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloSVMClassifier</span></code> -- SVM classifier with phylogenetic eigenvector features</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloKNNRegressor</span></code> -- KNN regressor with phylogenetic correction</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloKNNClassifier</span></code> -- KNN classifier with phylogenetic eigenvector features</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloElasticNet</span></code> -- Elastic Net with phylogenetic correction</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloRidge</span></code> -- Ridge regression with phylogenetic correction</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloLasso</span></code> -- Lasso regression with phylogenetic correction</p></li>
 </ul>
 </section>
 <section id="cross-validation">
@@ -106,6 +118,74 @@
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">phylo_feature_importance()</span></code> -- Comparative feature importance report</p></li>
 </ul>
+</section>
+<section id="shap-explanations">
+<h3>SHAP Explanations<a class="headerlink" href="#shap-explanations" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">phylo_shap()</span></code> -- Compute SHAP values separating feature vs. phylogenetic contributions</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloSHAPResult</span></code> -- Result container with properties, summary, and plotting methods</p></li>
+</ul>
+<p>Example usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">,</span> <span class="n">phylo_shap</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">phylo_shap</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">feature_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;body_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;diet_type&quot;</span><span class="p">])</span>
+
+<span class="c1"># What fraction of predictions comes from phylogenetic correction?</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Phylogenetic contribution: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">phylo_contribution</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Summary table</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+
+<span class="c1"># Built-in bar plot</span>
+<span class="n">result</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+
+<span class="c1"># Standard SHAP beeswarm</span>
+<span class="n">result</span><span class="o">.</span><span class="n">summary_plot</span><span class="p">()</span>
+
+<span class="c1"># Force plot for a single sample</span>
+<span class="n">result</span><span class="o">.</span><span class="n">force_plot</span><span class="p">(</span><span class="n">sample_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="model-comparison">
+<h3>Model Comparison<a class="headerlink" href="#model-comparison" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">phylo_model_comparison()</span></code> -- Compare multiple estimators with and without phylogenetic correction</p></li>
+</ul>
+</section>
+<section id="hyperparameter-tuning">
+<h3>Hyperparameter Tuning<a class="headerlink" href="#hyperparameter-tuning" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloGridSearchCV</span></code> -- Grid search with phylogenetic cross-validation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloRandomizedSearchCV</span></code> -- Randomized search with phylogenetic cross-validation</p></li>
+</ul>
+<p>Example usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">,</span> <span class="n">PhyloGridSearchCV</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="n">search</span> <span class="o">=</span> <span class="n">PhyloGridSearchCV</span><span class="p">(</span>
+    <span class="n">estimator</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">param_grid</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">],</span>
+        <span class="s2">&quot;eigenvector_variance&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">],</span>
+    <span class="p">},</span>
+    <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span>
+    <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">search</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best params: </span><span class="si">{</span><span class="n">search</span><span class="o">.</span><span class="n">best_params_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best score: </span><span class="si">{</span><span class="n">search</span><span class="o">.</span><span class="n">best_score_</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Predict with best model</span>
+<span class="n">preds</span> <span class="o">=</span> <span class="n">search</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="data-loading">
 <h3>Data Loading<a class="headerlink" href="#data-loading" title="Link to this heading"></a></h3>
