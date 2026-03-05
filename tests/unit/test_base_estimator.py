@@ -41,3 +41,47 @@ def test_get_params():
     params = est.get_params()
     assert params["include_eigenvectors"] is True
     assert params["eigenvector_variance"] == 0.8
+
+
+def test_fit_stores_tree_and_species_names():
+    """After fit, model should store tree_, species_names_, gene_trees_."""
+    from treeml import PhyloRandomForestRegressor
+    from Bio import Phylo
+    from io import StringIO
+    import numpy as np
+
+    nwk = "((A:1.0,B:1.0):1.0,(C:1.0,D:1.0):1.0);"
+    tree = Phylo.read(StringIO(nwk), "newick")
+    names = ["A", "B", "C", "D"]
+    rng = np.random.default_rng(42)
+    X = rng.standard_normal((4, 2))
+    y = rng.standard_normal(4)
+
+    model = PhyloRandomForestRegressor(n_estimators=10, random_state=42)
+    model.fit(X, y, tree=tree, species_names=names)
+
+    assert model.tree_ is tree
+    assert model.species_names_ == names
+    assert model.gene_trees_ is None
+
+
+def test_fit_stores_gene_trees():
+    """After fit with gene_trees, model should store gene_trees_."""
+    from treeml import PhyloRandomForestRegressor
+    from Bio import Phylo
+    from io import StringIO
+    import numpy as np
+
+    sp_nwk = "((A:1.0,B:1.0):1.0,(C:1.0,D:1.0):1.0);"
+    gt_nwk = "((A:0.8,C:0.8):1.2,(B:1.0,D:1.0):1.0);"
+    tree = Phylo.read(StringIO(sp_nwk), "newick")
+    gt = [Phylo.read(StringIO(gt_nwk), "newick")]
+    names = ["A", "B", "C", "D"]
+    rng = np.random.default_rng(42)
+    X = rng.standard_normal((4, 2))
+    y = rng.standard_normal(4)
+
+    model = PhyloRandomForestRegressor(n_estimators=10, random_state=42)
+    model.fit(X, y, tree=tree, species_names=names, gene_trees=gt)
+
+    assert model.gene_trees_ is gt

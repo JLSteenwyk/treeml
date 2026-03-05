@@ -26,6 +26,10 @@ class PhyloBaseEstimator(BaseEstimator):
         ordered_names: List[str],
         gene_trees: Optional[List] = None,
     ) -> np.ndarray:
+        self.tree_ = tree
+        self.species_names_ = list(ordered_names)
+        self.gene_trees_ = gene_trees
+
         if gene_trees is not None:
             from phykit.services.tree.vcv_utils import build_discordance_vcv
             vcv, metadata = build_discordance_vcv(

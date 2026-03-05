@@ -20,6 +20,8 @@ from treeml import (
     phylo_model_comparison,
     PhyloCladeCV,
     phylo_feature_importance,
+    phylo_shap,
+    PhyloSHAPResult,
     load_data,
 )
 
@@ -394,3 +396,34 @@ class TestModelComparisonEndToEnd:
         )
         assert len(report) == 4
         assert "delta" in report.columns
+
+
+@pytest.mark.integration
+class TestPhyloSHAPEndToEnd:
+    def test_shap_regression(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="brain_size",
+        )
+        model = PhyloRandomForestRegressor(n_estimators=50, random_state=42)
+        model.fit(X, y, tree=tree, species_names=names)
+        result = phylo_shap(model, X, feature_names=["body_mass", "diet_type"])
+        assert isinstance(result, PhyloSHAPResult)
+        assert result.shap_values.shape[0] == X.shape[0]
+        assert result.feature_names == ["body_mass", "diet_type"]
+        assert 0.0 <= result.phylo_contribution <= 1.0
+        summary = result.summary()
+        assert "phylo_total" in summary["feature"].values
+
+    def test_shap_classification(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="diet_type",
+        )
+        clf = PhyloRandomForestClassifier(n_estimators=50, random_state=42)
+        clf.fit(X, y, tree=tree, species_names=names)
+        result = phylo_shap(clf, X)
+        assert isinstance(result, PhyloSHAPResult)
+        assert result.shap_values.shape[0] == X.shape[0]

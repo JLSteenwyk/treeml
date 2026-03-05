@@ -14,6 +14,7 @@ from treeml.cv._distance import PhyloDistanceCV
 from treeml.cv._clade import PhyloCladeCV
 from treeml.importance._report import phylo_feature_importance
 from treeml.comparison._compare import phylo_model_comparison
+from treeml.shap._shap import phylo_shap, PhyloSHAPResult
 from treeml._io import load_data
 
 __all__ = [
@@ -33,5 +34,7 @@ __all__ = [
     "PhyloCladeCV",
     "phylo_feature_importance",
     "phylo_model_comparison",
+    "phylo_shap",
+    "PhyloSHAPResult",
     "load_data",
 ]

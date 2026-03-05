@@ -28,6 +28,7 @@ REQUIRES = [
     "scipy>=1.11.3",
     "scikit-learn>=1.4.2",
     "pandas>=2.0.0",
+    "shap>=0.42.0",
 ]
 
 setup(
