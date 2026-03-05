@@ -20,7 +20,19 @@ class PhyloBaseEstimator(BaseEstimator):
         self.include_eigenvectors = include_eigenvectors
         self.eigenvector_variance = eigenvector_variance
 
-    def _build_vcv(self, tree, ordered_names: List[str]) -> np.ndarray:
+    def _build_vcv(
+        self,
+        tree,
+        ordered_names: List[str],
+        gene_trees: Optional[List] = None,
+    ) -> np.ndarray:
+        if gene_trees is not None:
+            from phykit.services.tree.vcv_utils import build_discordance_vcv
+            vcv, metadata = build_discordance_vcv(
+                tree, gene_trees, ordered_names
+            )
+            self.discordance_metadata_ = metadata
+            return vcv
         from phykit.services.tree.vcv_utils import build_vcv_matrix
         return build_vcv_matrix(tree, ordered_names)
 
@@ -29,12 +41,16 @@ class PhyloBaseEstimator(BaseEstimator):
         X: np.ndarray,
         tree,
         ordered_names: List[str],
+        gene_trees: Optional[List] = None,
     ) -> Tuple[np.ndarray, Dict]:
         if not self.include_eigenvectors:
             return X, {"n_components": 0}
 
+        vcv = self._build_vcv(tree, ordered_names, gene_trees=gene_trees)
         E, info = extract_phylo_eigenvectors(
-            tree, ordered_names, variance_threshold=self.eigenvector_variance
+            tree, ordered_names,
+            variance_threshold=self.eigenvector_variance,
+            vcv=vcv,
         )
         X_aug = np.column_stack([X, E])
         return X_aug, info
@@ -45,14 +61,19 @@ class PhyloBaseEstimator(BaseEstimator):
         tree,
         species_names: Optional[List[str]],
         n_eigenvector_cols: int,
+        gene_trees: Optional[List] = None,
     ) -> Tuple[np.ndarray, bool]:
         if n_eigenvector_cols == 0:
             return X_new, tree is not None
 
         if tree is not None and species_names is not None:
+            vcv = self._build_vcv(
+                tree, species_names, gene_trees=gene_trees
+            )
             E, _ = extract_phylo_eigenvectors(
                 tree, species_names,
                 variance_threshold=self.eigenvector_variance,
+                vcv=vcv,
             )
             if E.shape[1] < n_eigenvector_cols:
                 pad = np.zeros((E.shape[0], n_eigenvector_cols - E.shape[1]))

@@ -25,14 +25,16 @@ class PhyloKNNClassifier(PhyloBaseEstimator):
         self.weights = weights
         self.knn_kwargs = knn_kwargs
 
-    def fit(self, X, y, tree=None, species_names=None):
+    def fit(self, X, y, tree=None, species_names=None, gene_trees=None):
         X = np.asarray(X)
         y = np.asarray(y)
 
         if tree is None or species_names is None:
             raise ValueError("tree and species_names are required for fit().")
 
-        X_aug, eigvec_info = self._augment_features(X, tree, species_names)
+        X_aug, eigvec_info = self._augment_features(
+            X, tree, species_names, gene_trees=gene_trees
+        )
         self.n_eigenvector_cols_ = eigvec_info["n_components"]
         self.n_features_original_ = X.shape[1]
 
@@ -49,16 +51,18 @@ class PhyloKNNClassifier(PhyloBaseEstimator):
 
         return self
 
-    def predict(self, X, tree=None, species_names=None):
+    def predict(self, X, tree=None, species_names=None, gene_trees=None):
         X = np.asarray(X)
         X_aug, _ = self._augment_features_predict(
-            X, tree, species_names, self.n_eigenvector_cols_
+            X, tree, species_names, self.n_eigenvector_cols_,
+            gene_trees=gene_trees,
         )
         return self.inner_model_.predict(X_aug)
 
-    def predict_proba(self, X, tree=None, species_names=None):
+    def predict_proba(self, X, tree=None, species_names=None, gene_trees=None):
         X = np.asarray(X)
         X_aug, _ = self._augment_features_predict(
-            X, tree, species_names, self.n_eigenvector_cols_
+            X, tree, species_names, self.n_eigenvector_cols_,
+            gene_trees=gene_trees,
         )
         return self.inner_model_.predict_proba(X_aug)

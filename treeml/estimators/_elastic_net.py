@@ -28,17 +28,20 @@ class PhyloElasticNet(PhyloBaseEstimator):
         self.random_state = random_state
         self.en_kwargs = en_kwargs
 
-    def fit(self, X, y, tree=None, species_names=None):
+    def fit(self, X, y, tree=None, species_names=None, gene_trees=None):
         X = np.asarray(X)
         y = np.asarray(y, dtype=float)
 
         if tree is None or species_names is None:
             raise ValueError("tree and species_names are required for fit().")
 
-        y_white, L = phylo_whiten(y, tree, species_names)
+        vcv = self._build_vcv(tree, species_names, gene_trees=gene_trees)
+        y_white, L = phylo_whiten(y, tree, species_names, vcv=vcv)
         self.L_ = L
 
-        X_aug, eigvec_info = self._augment_features(X, tree, species_names)
+        X_aug, eigvec_info = self._augment_features(
+            X, tree, species_names, gene_trees=gene_trees
+        )
         self.n_eigenvector_cols_ = eigvec_info["n_components"]
         self.n_features_original_ = X.shape[1]
 
@@ -52,19 +55,19 @@ class PhyloElasticNet(PhyloBaseEstimator):
 
         return self
 
-    def predict(self, X, tree=None, species_names=None):
+    def predict(self, X, tree=None, species_names=None, gene_trees=None):
         X = np.asarray(X)
 
         X_aug, phylo_corrected = self._augment_features_predict(
-            X, tree, species_names, self.n_eigenvector_cols_
+            X, tree, species_names, self.n_eigenvector_cols_,
+            gene_trees=gene_trees,
         )
 
         y_pred_white = self.inner_model_.predict(X_aug)
 
         if phylo_corrected and tree is not None and species_names is not None:
-            from phykit.services.tree.vcv_utils import build_vcv_matrix
-            C = build_vcv_matrix(tree, species_names)
-            L_pred = np.linalg.cholesky(C)
+            vcv = self._build_vcv(tree, species_names, gene_trees=gene_trees)
+            L_pred = np.linalg.cholesky(vcv)
             return phylo_unwhiten(y_pred_white, L_pred)
         else:
             return y_pred_white

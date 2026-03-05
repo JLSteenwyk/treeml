@@ -1,18 +1,26 @@
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import numpy as np
 from phykit.services.tree.vcv_utils import build_vcv_matrix
 
 
 def phylo_whiten(
-    y: np.ndarray, tree, ordered_names: List[str]
+    y: np.ndarray,
+    tree,
+    ordered_names: List[str],
+    vcv: Optional[np.ndarray] = None,
 ) -> Tuple[np.ndarray, np.ndarray]:
     """Whiten target vector y using phylogenetic VCV matrix.
 
     Computes Cholesky decomposition of VCV: C = L L^T
     Returns y_white = L^{-1} y and the Cholesky factor L.
+
+    If vcv is provided, uses it directly instead of computing from tree.
     """
-    C = build_vcv_matrix(tree, ordered_names)
+    if vcv is None:
+        C = build_vcv_matrix(tree, ordered_names)
+    else:
+        C = vcv
     L = np.linalg.cholesky(C)
     y_white = np.linalg.solve(L, y)
     return y_white, L

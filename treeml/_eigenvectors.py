@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 from phykit.services.tree.vcv_utils import build_vcv_matrix
@@ -8,15 +8,21 @@ def extract_phylo_eigenvectors(
     tree,
     ordered_names: List[str],
     variance_threshold: float = 0.90,
+    vcv: Optional[np.ndarray] = None,
 ) -> Tuple[np.ndarray, Dict]:
     """Extract phylogenetic eigenvectors from double-centered VCV matrix.
 
     Performs PCoA-like decomposition: double-center the VCV, eigendecompose,
     and retain eigenvectors explaining at least `variance_threshold` of variance.
 
+    If vcv is provided, uses it directly instead of computing from tree.
+
     Returns (E, info) where E is (n_species x k) and info contains metadata.
     """
-    C = build_vcv_matrix(tree, ordered_names)
+    if vcv is None:
+        C = build_vcv_matrix(tree, ordered_names)
+    else:
+        C = vcv
     n = len(ordered_names)
 
     # Double-center the VCV matrix (Gower centering)
