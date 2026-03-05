@@ -7,6 +7,15 @@ from sklearn.model_selection import cross_val_score
 from treeml import (
     PhyloRandomForestRegressor,
     PhyloRandomForestClassifier,
+    PhyloGradientBoostingRegressor,
+    PhyloGradientBoostingClassifier,
+    PhyloSVMRegressor,
+    PhyloSVMClassifier,
+    PhyloKNNRegressor,
+    PhyloKNNClassifier,
+    PhyloElasticNet,
+    PhyloRidge,
+    PhyloLasso,
     PhyloDistanceCV,
     PhyloCladeCV,
     phylo_feature_importance,
@@ -123,3 +132,237 @@ class TestClassificationEndToEnd:
         cv = PhyloCladeCV(tree=tree, species_names=names, n_splits=3)
         splits = list(cv.split(X, y))
         assert len(splits) >= 1
+
+
+@pytest.mark.integration
+class TestGradientBoostingRegressionEndToEnd:
+    def test_fit_predict_with_tree(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="brain_size",
+        )
+        model = PhyloGradientBoostingRegressor(n_estimators=50, random_state=42)
+        model.fit(X, y, tree=tree, species_names=names)
+        preds = model.predict(X, tree=tree, species_names=names)
+        assert preds.shape == y.shape
+
+    def test_predict_without_tree_degrades_gracefully(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="brain_size",
+        )
+        model = PhyloGradientBoostingRegressor(n_estimators=50, random_state=42)
+        model.fit(X, y, tree=tree, species_names=names)
+        with pytest.warns(UserWarning):
+            preds = model.predict(X)
+        assert preds.shape == y.shape
+
+
+@pytest.mark.integration
+class TestGradientBoostingClassificationEndToEnd:
+    def test_fit_predict(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="diet_type",
+        )
+        clf = PhyloGradientBoostingClassifier(n_estimators=50, random_state=42)
+        clf.fit(X, y, tree=tree, species_names=names)
+        preds = clf.predict(X, tree=tree, species_names=names)
+        assert preds.shape == y.shape
+
+    def test_predict_proba(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="diet_type",
+        )
+        clf = PhyloGradientBoostingClassifier(n_estimators=50, random_state=42)
+        clf.fit(X, y, tree=tree, species_names=names)
+        proba = clf.predict_proba(X, tree=tree, species_names=names)
+        assert proba.shape[1] == 2
+        np.testing.assert_allclose(proba.sum(axis=1), 1.0)
+
+
+@pytest.mark.integration
+class TestSVMRegressionEndToEnd:
+    def test_fit_predict_with_tree(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="brain_size",
+        )
+        model = PhyloSVMRegressor(kernel="rbf", C=1.0)
+        model.fit(X, y, tree=tree, species_names=names)
+        preds = model.predict(X, tree=tree, species_names=names)
+        assert preds.shape == y.shape
+
+    def test_predict_without_tree_degrades_gracefully(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="brain_size",
+        )
+        model = PhyloSVMRegressor(kernel="rbf", C=1.0)
+        model.fit(X, y, tree=tree, species_names=names)
+        with pytest.warns(UserWarning):
+            preds = model.predict(X)
+        assert preds.shape == y.shape
+
+
+@pytest.mark.integration
+class TestSVMClassificationEndToEnd:
+    def test_fit_predict(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="diet_type",
+        )
+        clf = PhyloSVMClassifier(kernel="rbf", C=1.0, random_state=42)
+        clf.fit(X, y, tree=tree, species_names=names)
+        preds = clf.predict(X, tree=tree, species_names=names)
+        assert preds.shape == y.shape
+
+    def test_predict_proba(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="diet_type",
+        )
+        clf = PhyloSVMClassifier(kernel="rbf", C=1.0, random_state=42)
+        clf.fit(X, y, tree=tree, species_names=names)
+        proba = clf.predict_proba(X, tree=tree, species_names=names)
+        assert proba.shape[1] == 2
+        np.testing.assert_allclose(proba.sum(axis=1), 1.0)
+
+
+@pytest.mark.integration
+class TestKNNRegressionEndToEnd:
+    def test_fit_predict_with_tree(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="brain_size",
+        )
+        model = PhyloKNNRegressor(n_neighbors=3)
+        model.fit(X, y, tree=tree, species_names=names)
+        preds = model.predict(X, tree=tree, species_names=names)
+        assert preds.shape == y.shape
+
+    def test_predict_without_tree_degrades_gracefully(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="brain_size",
+        )
+        model = PhyloKNNRegressor(n_neighbors=3)
+        model.fit(X, y, tree=tree, species_names=names)
+        with pytest.warns(UserWarning):
+            preds = model.predict(X)
+        assert preds.shape == y.shape
+
+
+@pytest.mark.integration
+class TestKNNClassificationEndToEnd:
+    def test_fit_predict(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="diet_type",
+        )
+        clf = PhyloKNNClassifier(n_neighbors=3)
+        clf.fit(X, y, tree=tree, species_names=names)
+        preds = clf.predict(X, tree=tree, species_names=names)
+        assert preds.shape == y.shape
+
+    def test_predict_proba(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="diet_type",
+        )
+        clf = PhyloKNNClassifier(n_neighbors=3)
+        clf.fit(X, y, tree=tree, species_names=names)
+        proba = clf.predict_proba(X, tree=tree, species_names=names)
+        assert proba.shape[1] == 2
+        np.testing.assert_allclose(proba.sum(axis=1), 1.0)
+
+
+@pytest.mark.integration
+class TestElasticNetEndToEnd:
+    def test_fit_predict_with_tree(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="brain_size",
+        )
+        model = PhyloElasticNet(alpha=1.0, l1_ratio=0.5, random_state=42)
+        model.fit(X, y, tree=tree, species_names=names)
+        preds = model.predict(X, tree=tree, species_names=names)
+        assert preds.shape == y.shape
+
+    def test_predict_without_tree_degrades_gracefully(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="brain_size",
+        )
+        model = PhyloElasticNet(alpha=1.0, l1_ratio=0.5, random_state=42)
+        model.fit(X, y, tree=tree, species_names=names)
+        with pytest.warns(UserWarning):
+            preds = model.predict(X)
+        assert preds.shape == y.shape
+
+
+@pytest.mark.integration
+class TestRidgeEndToEnd:
+    def test_fit_predict_with_tree(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="brain_size",
+        )
+        model = PhyloRidge(alpha=1.0)
+        model.fit(X, y, tree=tree, species_names=names)
+        preds = model.predict(X, tree=tree, species_names=names)
+        assert preds.shape == y.shape
+
+    def test_predict_without_tree_degrades_gracefully(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="brain_size",
+        )
+        model = PhyloRidge(alpha=1.0)
+        model.fit(X, y, tree=tree, species_names=names)
+        with pytest.warns(UserWarning):
+            preds = model.predict(X)
+        assert preds.shape == y.shape
+
+
+@pytest.mark.integration
+class TestLassoEndToEnd:
+    def test_fit_predict_with_tree(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="brain_size",
+        )
+        model = PhyloLasso(alpha=1.0, random_state=42)
+        model.fit(X, y, tree=tree, species_names=names)
+        preds = model.predict(X, tree=tree, species_names=names)
+        assert preds.shape == y.shape
+
+    def test_predict_without_tree_degrades_gracefully(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="brain_size",
+        )
+        model = PhyloLasso(alpha=1.0, random_state=42)
+        model.fit(X, y, tree=tree, species_names=names)
+        with pytest.warns(UserWarning):
+            preds = model.predict(X)
+        assert preds.shape == y.shape
