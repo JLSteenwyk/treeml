@@ -17,6 +17,7 @@ from treeml import (
     PhyloRidge,
     PhyloLasso,
     PhyloDistanceCV,
+    phylo_model_comparison,
     PhyloCladeCV,
     phylo_feature_importance,
     load_data,
@@ -366,3 +367,30 @@ class TestLassoEndToEnd:
         with pytest.warns(UserWarning):
             preds = model.predict(X)
         assert preds.shape == y.shape
+
+
+@pytest.mark.integration
+class TestModelComparisonEndToEnd:
+    def test_regression_comparison(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="brain_size",
+        )
+        report = phylo_model_comparison(
+            X, y, tree=tree, species_names=names, random_state=42
+        )
+        assert len(report) == 7
+        assert "delta" in report.columns
+
+    def test_classification_comparison(self):
+        X, y, tree, names = load_data(
+            trait_file=os.path.join(SAMPLE_DIR, "traits_simple.tsv"),
+            tree_file=os.path.join(SAMPLE_DIR, "tree_simple.nwk"),
+            response="diet_type",
+        )
+        report = phylo_model_comparison(
+            X, y, tree=tree, species_names=names, random_state=42
+        )
+        assert len(report) == 4
+        assert "delta" in report.columns
