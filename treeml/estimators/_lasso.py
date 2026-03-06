@@ -15,6 +15,7 @@ class PhyloLasso(PhyloBaseEstimator):
         alpha: float = 1.0,
         include_eigenvectors: bool = True,
         eigenvector_variance: float = 0.90,
+        whiten_target: bool = False,
         random_state=None,
         **lasso_kwargs,
     ):
@@ -23,6 +24,7 @@ class PhyloLasso(PhyloBaseEstimator):
             eigenvector_variance=eigenvector_variance,
         )
         self.alpha = alpha
+        self.whiten_target = whiten_target
         self.random_state = random_state
         self.lasso_kwargs = lasso_kwargs
 
@@ -34,8 +36,13 @@ class PhyloLasso(PhyloBaseEstimator):
             raise ValueError("tree and species_names are required for fit().")
 
         vcv = self._build_vcv(tree, species_names, gene_trees=gene_trees)
-        y_white, L = phylo_whiten(y, tree, species_names, vcv=vcv)
-        self.L_ = L
+
+        if self.whiten_target:
+            y_fit, L = phylo_whiten(y, tree, species_names, vcv=vcv)
+            self.L_ = L
+        else:
+            y_fit = y
+            self.L_ = None
 
         X_aug, eigvec_info = self._augment_features(
             X, tree, species_names, gene_trees=gene_trees
@@ -48,7 +55,7 @@ class PhyloLasso(PhyloBaseEstimator):
             random_state=self.random_state,
             **self.lasso_kwargs,
         )
-        self.inner_model_.fit(X_aug, y_white)
+        self.inner_model_.fit(X_aug, y_fit)
 
         return self
 
@@ -60,11 +67,11 @@ class PhyloLasso(PhyloBaseEstimator):
             gene_trees=gene_trees,
         )
 
-        y_pred_white = self.inner_model_.predict(X_aug)
+        y_pred = self.inner_model_.predict(X_aug)
 
-        if phylo_corrected and tree is not None and species_names is not None:
+        if self.whiten_target and self.L_ is not None and phylo_corrected and tree is not None and species_names is not None:
             vcv = self._build_vcv(tree, species_names, gene_trees=gene_trees)
             L_pred = np.linalg.cholesky(vcv)
-            return phylo_unwhiten(y_pred_white, L_pred)
+            return phylo_unwhiten(y_pred, L_pred)
         else:
-            return y_pred_white
+            return y_pred
