@@ -15,6 +15,7 @@ class PhyloLasso(PhyloBaseEstimator):
         alpha: float = 1.0,
         include_eigenvectors: bool = True,
         eigenvector_variance: float = 0.90,
+        whiten_features: bool = True,
         whiten_target: bool = False,
         random_state=None,
         **lasso_kwargs,
@@ -22,6 +23,7 @@ class PhyloLasso(PhyloBaseEstimator):
         super().__init__(
             include_eigenvectors=include_eigenvectors,
             eigenvector_variance=eigenvector_variance,
+            whiten_features=whiten_features,
         )
         self.alpha = alpha
         self.whiten_target = whiten_target

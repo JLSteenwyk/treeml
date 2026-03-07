@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.base import BaseEstimator
 
 from treeml._eigenvectors import extract_phylo_eigenvectors
-from treeml._whitening import phylo_whiten, phylo_unwhiten
+from treeml._whitening import phylo_whiten, phylo_unwhiten, phylo_whiten_features
 
 
 class PhyloBaseEstimator(BaseEstimator):
@@ -15,10 +15,12 @@ class PhyloBaseEstimator(BaseEstimator):
         self,
         include_eigenvectors: bool = True,
         eigenvector_variance: float = 0.90,
+        whiten_features: bool = True,
         **kwargs,
     ):
         self.include_eigenvectors = include_eigenvectors
         self.eigenvector_variance = eigenvector_variance
+        self.whiten_features = whiten_features
 
     @staticmethod
     def _validate_tree(tree):
@@ -71,10 +73,19 @@ class PhyloBaseEstimator(BaseEstimator):
         ordered_names: List[str],
         gene_trees: Optional[List] = None,
     ) -> Tuple[np.ndarray, Dict]:
-        if not self.include_eigenvectors:
+        need_vcv = self.include_eigenvectors or self.whiten_features
+        if not need_vcv:
             return X, {"n_components": 0}
 
         vcv = self._build_vcv(tree, ordered_names, gene_trees=gene_trees)
+
+        if self.whiten_features:
+            X, L = phylo_whiten_features(X, vcv)
+            self.L_features_ = L
+
+        if not self.include_eigenvectors:
+            return X, {"n_components": 0}
+
         E, info = extract_phylo_eigenvectors(
             tree, ordered_names,
             variance_threshold=self.eigenvector_variance,
@@ -91,25 +102,32 @@ class PhyloBaseEstimator(BaseEstimator):
         n_eigenvector_cols: int,
         gene_trees: Optional[List] = None,
     ) -> Tuple[np.ndarray, bool]:
-        if n_eigenvector_cols == 0:
+        need_phylo = n_eigenvector_cols > 0 or self.whiten_features
+        if not need_phylo:
             return X_new, tree is not None
 
         if tree is not None and species_names is not None:
             vcv = self._build_vcv(
                 tree, species_names, gene_trees=gene_trees
             )
-            E, _ = extract_phylo_eigenvectors(
-                tree, species_names,
-                variance_threshold=self.eigenvector_variance,
-                vcv=vcv,
-            )
-            if E.shape[1] < n_eigenvector_cols:
-                pad = np.zeros((E.shape[0], n_eigenvector_cols - E.shape[1]))
-                E = np.column_stack([E, pad])
-            elif E.shape[1] > n_eigenvector_cols:
-                E = E[:, :n_eigenvector_cols]
-            X_aug = np.column_stack([X_new, E])
-            return X_aug, True
+
+            if self.whiten_features:
+                X_new, _ = phylo_whiten_features(X_new, vcv)
+
+            if n_eigenvector_cols > 0:
+                E, _ = extract_phylo_eigenvectors(
+                    tree, species_names,
+                    variance_threshold=self.eigenvector_variance,
+                    vcv=vcv,
+                )
+                if E.shape[1] < n_eigenvector_cols:
+                    pad = np.zeros((E.shape[0], n_eigenvector_cols - E.shape[1]))
+                    E = np.column_stack([E, pad])
+                elif E.shape[1] > n_eigenvector_cols:
+                    E = E[:, :n_eigenvector_cols]
+                X_new = np.column_stack([X_new, E])
+
+            return X_new, True
         else:
             warnings.warn(
                 "No tree provided for prediction. "
@@ -117,6 +135,7 @@ class PhyloBaseEstimator(BaseEstimator):
                 UserWarning,
                 stacklevel=2,
             )
-            zeros = np.zeros((X_new.shape[0], n_eigenvector_cols))
-            X_aug = np.column_stack([X_new, zeros])
-            return X_aug, False
+            if n_eigenvector_cols > 0:
+                zeros = np.zeros((X_new.shape[0], n_eigenvector_cols))
+                X_new = np.column_stack([X_new, zeros])
+            return X_new, False

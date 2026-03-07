@@ -16,12 +16,14 @@ class PhyloKNNRegressor(PhyloBaseEstimator):
         weights: str = "uniform",
         include_eigenvectors: bool = True,
         eigenvector_variance: float = 0.90,
+        whiten_features: bool = True,
         whiten_target: bool = False,
         **knn_kwargs,
     ):
         super().__init__(
             include_eigenvectors=include_eigenvectors,
             eigenvector_variance=eigenvector_variance,
+            whiten_features=whiten_features,
         )
         self.n_neighbors = n_neighbors
         self.weights = weights

@@ -74,8 +74,8 @@ def test_discordance_vcv_differs_from_species_vcv():
     model_discord = PhyloRandomForestRegressor(n_estimators=10, random_state=42)
     model_discord.fit(X, y, tree=sp_tree, species_names=names, gene_trees=gene_trees)
 
-    # The Cholesky factors should differ
-    assert not np.allclose(model_species.L_, model_discord.L_)
+    # The Cholesky factors from feature whitening should differ
+    assert not np.allclose(model_species.L_features_, model_discord.L_features_)
 
 
 def test_gradient_boosting_with_gene_trees():

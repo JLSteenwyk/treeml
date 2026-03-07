@@ -15,6 +15,7 @@ class PhyloGradientBoostingRegressor(PhyloBaseEstimator):
         n_estimators: int = 100,
         include_eigenvectors: bool = True,
         eigenvector_variance: float = 0.90,
+        whiten_features: bool = True,
         whiten_target: bool = False,
         random_state=None,
         **gb_kwargs,
@@ -22,6 +23,7 @@ class PhyloGradientBoostingRegressor(PhyloBaseEstimator):
         super().__init__(
             include_eigenvectors=include_eigenvectors,
             eigenvector_variance=eigenvector_variance,
+            whiten_features=whiten_features,
         )
         self.n_estimators = n_estimators
         self.whiten_target = whiten_target

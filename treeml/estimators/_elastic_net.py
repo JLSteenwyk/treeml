@@ -16,6 +16,7 @@ class PhyloElasticNet(PhyloBaseEstimator):
         l1_ratio: float = 0.5,
         include_eigenvectors: bool = True,
         eigenvector_variance: float = 0.90,
+        whiten_features: bool = True,
         whiten_target: bool = False,
         random_state=None,
         **en_kwargs,
@@ -23,6 +24,7 @@ class PhyloElasticNet(PhyloBaseEstimator):
         super().__init__(
             include_eigenvectors=include_eigenvectors,
             eigenvector_variance=eigenvector_variance,
+            whiten_features=whiten_features,
         )
         self.alpha = alpha
         self.l1_ratio = l1_ratio
