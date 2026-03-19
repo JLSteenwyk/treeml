@@ -1,15 +1,6 @@
-.. _change_log:
-
-
-Change log
-==========
-
-Major changes to treeml are summarized here.
-
-**0.1.0**
+## 0.1.0
 
 Initial release with:
-
 - PhyloRandomForestRegressor and PhyloRandomForestClassifier
 - PhyloGradientBoostingRegressor and PhyloGradientBoostingClassifier
 - PhyloSVMRegressor and PhyloSVMClassifier
