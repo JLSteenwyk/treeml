@@ -1,0 +1,788 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advanced Usage &mdash; treeml  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=83f1d849" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Tutorials" href="../tutorials/index.html" />
+    <link rel="prev" title="About" href="../about/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#estimators">Estimators</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#regressors">Regressors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#classifiers">Classifiers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#common-parameters">Common Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cross-validation">Cross-Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#feature-importance">Feature Importance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#shap-explanations">SHAP Explanations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model-comparison">Model Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hyperparameter-tuning">Hyperparameter Tuning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#serialization">Serialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-loading">Data Loading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#all-estimators">All Estimators</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../change_log/index.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other_software/index.html">Other software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../frequently_asked_questions/index.html">FAQ</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">treeml</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Advanced Usage</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="advanced-usage">
+<h1>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading"></a></h1>
+<p>This section describes the various features and options of treeml.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#estimators">Estimators</a></p></li>
+<li><p><a class="reference internal" href="#common-parameters">Common Parameters</a></p></li>
+<li><p><a class="reference internal" href="#cross-validation">Cross-Validation</a></p></li>
+<li><p><a class="reference internal" href="#feature-importance">Feature Importance</a></p></li>
+<li><p><a class="reference internal" href="#shap-explanations">SHAP Explanations</a></p></li>
+<li><p><a class="reference internal" href="#model-comparison">Model Comparison</a></p></li>
+<li><p><a class="reference internal" href="#hyperparameter-tuning">Hyperparameter Tuning</a></p></li>
+<li><p><a class="reference internal" href="#serialization">Serialization</a></p></li>
+<li><p><a class="reference internal" href="#data-loading">Data Loading</a></p></li>
+<li><p><a class="reference internal" href="#all-estimators">All Estimators</a></p></li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<section id="estimators">
+<span id="id1"></span><h2>Estimators<a class="headerlink" href="#estimators" title="Link to this heading"></a></h2>
+<p>treeml provides scikit-learn compatible estimators that account for phylogenetic
+non-independence. All estimators accept <code class="docutils literal notranslate"><span class="pre">tree</span></code>, <code class="docutils literal notranslate"><span class="pre">species_names</span></code>, and optionally
+<code class="docutils literal notranslate"><span class="pre">gene_trees</span></code> arguments in their <code class="docutils literal notranslate"><span class="pre">fit()</span></code> and <code class="docutils literal notranslate"><span class="pre">predict()</span></code> methods.</p>
+<p>treeml estimators correct for phylogenetic non-independence using three approaches:</p>
+<ol class="arabic simple">
+<li><p><strong>Phylogenetic eigenvectors</strong> -- Eigenvectors are extracted from the phylogenetic
+variance-covariance (VCV) matrix via PCoA and appended to the feature matrix,
+allowing the model to learn phylogenetic structure.</p></li>
+<li><p><strong>Phylogenetic whitening</strong> -- The feature matrix and/or target variable are
+transformed using the Cholesky decomposition of the VCV matrix, removing
+phylogenetic autocorrelation before model training.</p></li>
+<li><p><strong>Phylogenetic cross-validation</strong> -- Specialized CV splitters (distance-based and
+clade-based) ensure that closely related species do not leak information between
+training and test folds.</p></li>
+</ol>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<section id="regressors">
+<h3>Regressors<a class="headerlink" href="#regressors" title="Link to this heading"></a></h3>
+<p>Regressors support both eigenvector augmentation and target/feature whitening.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloRandomForestRegressor</span></code> -- Random Forest regressor with phylogenetic correction.
+Wraps scikit-learn's <code class="docutils literal notranslate"><span class="pre">RandomForestRegressor</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloGradientBoostingRegressor</span></code> -- Gradient Boosting regressor with phylogenetic correction.
+Wraps scikit-learn's <code class="docutils literal notranslate"><span class="pre">GradientBoostingRegressor</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloSVMRegressor</span></code> -- SVM regressor with phylogenetic correction.
+Wraps scikit-learn's <code class="docutils literal notranslate"><span class="pre">SVR</span></code>. Parameters: <code class="docutils literal notranslate"><span class="pre">kernel</span></code>, <code class="docutils literal notranslate"><span class="pre">C</span></code>, <code class="docutils literal notranslate"><span class="pre">epsilon</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloKNNRegressor</span></code> -- KNN regressor with phylogenetic correction.
+Wraps scikit-learn's <code class="docutils literal notranslate"><span class="pre">KNeighborsRegressor</span></code>. Parameters: <code class="docutils literal notranslate"><span class="pre">n_neighbors</span></code>, <code class="docutils literal notranslate"><span class="pre">weights</span></code>.
+Clamps <code class="docutils literal notranslate"><span class="pre">n_neighbors</span></code> to <code class="docutils literal notranslate"><span class="pre">n_samples</span> <span class="pre">-</span> <span class="pre">1</span></code> automatically.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloRidge</span></code> -- Ridge regression with phylogenetic correction.
+Wraps scikit-learn's <code class="docutils literal notranslate"><span class="pre">Ridge</span></code>. Parameter: <code class="docutils literal notranslate"><span class="pre">alpha</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloLasso</span></code> -- Lasso regression with phylogenetic correction.
+Wraps scikit-learn's <code class="docutils literal notranslate"><span class="pre">Lasso</span></code>. Parameter: <code class="docutils literal notranslate"><span class="pre">alpha</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloElasticNet</span></code> -- Elastic Net with phylogenetic correction.
+Wraps scikit-learn's <code class="docutils literal notranslate"><span class="pre">ElasticNet</span></code>. Parameters: <code class="docutils literal notranslate"><span class="pre">alpha</span></code>, <code class="docutils literal notranslate"><span class="pre">l1_ratio</span></code>.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloRandomForestRegressor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Bio</span><span class="w"> </span><span class="kn">import</span> <span class="n">Phylo</span>
+
+<span class="n">tree</span> <span class="o">=</span> <span class="n">Phylo</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;species.nwk&quot;</span><span class="p">,</span> <span class="s2">&quot;newick&quot;</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Gradient Boosting</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloGradientBoostingRegressor</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloGradientBoostingRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># SVM</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloSVMRegressor</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloSVMRegressor</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s2">&quot;rbf&quot;</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># KNN</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloKNNRegressor</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloKNNRegressor</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ridge</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloRidge</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloRidge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Lasso</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloLasso</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloLasso</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Elastic Net</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloElasticNet</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloElasticNet</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">l1_ratio</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="classifiers">
+<h3>Classifiers<a class="headerlink" href="#classifiers" title="Link to this heading"></a></h3>
+<p>Classifiers support eigenvector augmentation and feature whitening. They do not
+support target whitening (<code class="docutils literal notranslate"><span class="pre">whiten_target</span></code>) since the target is categorical.
+All classifiers provide <code class="docutils literal notranslate"><span class="pre">predict_proba()</span></code> in addition to <code class="docutils literal notranslate"><span class="pre">predict()</span></code>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloRandomForestClassifier</span></code> -- Random Forest classifier with phylogenetic eigenvector features.
+Wraps scikit-learn's <code class="docutils literal notranslate"><span class="pre">RandomForestClassifier</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloGradientBoostingClassifier</span></code> -- Gradient Boosting classifier with phylogenetic eigenvector features.
+Wraps scikit-learn's <code class="docutils literal notranslate"><span class="pre">GradientBoostingClassifier</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloSVMClassifier</span></code> -- SVM classifier with phylogenetic eigenvector features.
+Wraps scikit-learn's <code class="docutils literal notranslate"><span class="pre">SVC</span></code> (with <code class="docutils literal notranslate"><span class="pre">probability=True</span></code>). Parameters: <code class="docutils literal notranslate"><span class="pre">kernel</span></code>, <code class="docutils literal notranslate"><span class="pre">C</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhyloKNNClassifier</span></code> -- KNN classifier with phylogenetic eigenvector features.
+Wraps scikit-learn's <code class="docutils literal notranslate"><span class="pre">KNeighborsClassifier</span></code>. Parameters: <code class="docutils literal notranslate"><span class="pre">n_neighbors</span></code>, <code class="docutils literal notranslate"><span class="pre">weights</span></code>.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloRandomForestClassifier</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloRandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+<span class="n">probabilities</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Gradient Boosting classifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloGradientBoostingClassifier</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloGradientBoostingClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># SVM classifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloSVMClassifier</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloSVMClassifier</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s2">&quot;rbf&quot;</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># KNN classifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloKNNClassifier</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloKNNClassifier</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+<section id="common-parameters">
+<span id="id2"></span><h2>Common Parameters<a class="headerlink" href="#common-parameters" title="Link to this heading"></a></h2>
+<p>All phylogenetic estimators share the following parameters in addition to
+their underlying scikit-learn estimator parameters.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 15.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">include_eigenvectors</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>Augment feature matrix with phylogenetic eigenvectors from PCoA on the
+double-centered VCV matrix. The eigenvectors allow the model to learn
+phylogenetic structure directly from the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">eigenvector_variance</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.90</span></code></p></td>
+<td><p>Fraction of variance explained by retained eigenvectors. Higher values
+retain more eigenvectors. Must be between 0 and 1.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">whiten_features</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>Phylogenetically whiten the feature matrix using Cholesky decomposition
+of the VCV matrix. This corrects for phylogenetic autocorrelation among
+samples under a Brownian motion model of evolution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">whiten_target</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>Phylogenetically whiten the target variable (regressors only). Uses the
+Cholesky decomposition of the VCV to remove phylogenetic signal from y
+before model training. Predictions are un-whitened automatically.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><strong>fit() and predict() arguments</strong></p>
+<p>All estimators accept the following arguments in <code class="docutils literal notranslate"><span class="pre">fit()</span></code> and <code class="docutils literal notranslate"><span class="pre">predict()</span></code>:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Argument</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">X</span></code></p></td>
+<td><p>Feature matrix of shape (n_species, n_features).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">y</span></code></p></td>
+<td><p>Target vector of shape (n_species,). Only required for <code class="docutils literal notranslate"><span class="pre">fit()</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tree</span></code></p></td>
+<td><p>Phylogenetic tree (Bio.Phylo tree object). Required for <code class="docutils literal notranslate"><span class="pre">fit()</span></code>.
+Optional for <code class="docutils literal notranslate"><span class="pre">predict()</span></code> -- if omitted, predictions are made without
+phylogenetic correction and a warning is raised.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">species_names</span></code></p></td>
+<td><p>List of species names matching the rows of X, in the same order.
+Required for <code class="docutils literal notranslate"><span class="pre">fit()</span></code>. Optional for <code class="docutils literal notranslate"><span class="pre">predict()</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gene_trees</span></code></p></td>
+<td><p>Optional list of gene trees for discordance-aware VCV construction.
+When provided, the VCV matrix accounts for gene tree discordance
+rather than using only the species tree.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="cross-validation">
+<span id="id3"></span><h2>Cross-Validation<a class="headerlink" href="#cross-validation" title="Link to this heading"></a></h2>
+<p>Standard k-fold cross-validation can leak phylogenetic signal between folds because
+closely related species may appear in both training and test sets. treeml provides
+two phylogenetic-aware CV splitters that prevent this.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><strong>PhyloDistanceCV</strong></p>
+<p>Splits data based on phylogenetic distance using hierarchical clustering (UPGMA)
+on patristic distances computed from the tree. Species in the same cluster are
+assigned to the same fold, ensuring that closely related species do not appear in
+both training and test sets.</p>
+<p>Parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tree</span></code> -- Phylogenetic tree (Bio.Phylo).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">species_names</span></code> -- List of species names matching rows of X.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_splits</span></code> -- Number of CV folds. <em>Default: 5</em>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">min_dist</span></code> -- Optional minimum phylogenetic distance for cluster assignment.
+If omitted, the distance threshold is automatically tuned via binary search
+to produce the requested number of folds.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloDistanceCV</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">cross_val_score</span>
+
+<span class="n">cv</span> <span class="o">=</span> <span class="n">PhyloDistanceCV</span><span class="p">(</span><span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">,</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">cv</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CV R² scores: </span><span class="si">{</span><span class="n">scores</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><strong>PhyloCladeCV</strong></p>
+<p>Holds out entire monophyletic clades for each fold. Clades are selected to be
+non-overlapping and approximately equal in size. Remaining species not assigned
+to any clade are added to the smallest fold.</p>
+<p>Parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tree</span></code> -- Phylogenetic tree (Bio.Phylo).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">species_names</span></code> -- List of species names matching rows of X.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_splits</span></code> -- Number of CV folds. <em>Default: 5</em>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">min_clade_size</span></code> -- Minimum number of tips for a clade to be considered. <em>Default: 2</em>.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloCladeCV</span>
+
+<span class="n">cv</span> <span class="o">=</span> <span class="n">PhyloCladeCV</span><span class="p">(</span><span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">,</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">fold</span><span class="p">,</span> <span class="p">(</span><span class="n">train_idx</span><span class="p">,</span> <span class="n">test_idx</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cv</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">X</span><span class="p">)):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fold </span><span class="si">{</span><span class="n">fold</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">train_idx</span><span class="p">)</span><span class="si">}</span><span class="s2"> train, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">test_idx</span><span class="p">)</span><span class="si">}</span><span class="s2"> test&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="feature-importance">
+<span id="id4"></span><h2>Feature Importance<a class="headerlink" href="#feature-importance" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">phylo_feature_importance()</span></code> function compares feature importance with and
+without phylogenetic correction using permutation importance. This helps distinguish
+true biological signal from phylogenetic artifact.</p>
+<p>For each feature, permutation importance measures how much the model's score drops
+when that feature is randomly shuffled. The function fits both a standard (uncorrected)
+Random Forest and a phylogenetic-corrected Random Forest, then reports the importance
+scores side by side.</p>
+<p>Parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code> -- Feature matrix.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">y</span></code> -- Target vector.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tree</span></code> -- Phylogenetic tree.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">species_names</span></code> -- List of species names.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">feature_names</span></code> -- Optional list of feature names. <em>Default: feature_0, feature_1, ...</em></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_repeats</span></code> -- Number of permutation repeats. <em>Default: 10</em>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scoring</span></code> -- Scoring metric. <em>Default: 'r2' for regression, 'accuracy' for classification</em>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_estimators</span></code> -- Number of trees in the Random Forest. <em>Default: 100</em>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">random_state</span></code> -- Random state for reproducibility.</p></li>
+</ul>
+<p>Returns a DataFrame with columns: <code class="docutils literal notranslate"><span class="pre">feature</span></code>, <code class="docutils literal notranslate"><span class="pre">raw_importance</span></code>,
+<code class="docutils literal notranslate"><span class="pre">phylo_corrected_importance</span></code>, <code class="docutils literal notranslate"><span class="pre">delta</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">phylo_feature_importance</span>
+
+<span class="n">report</span> <span class="o">=</span> <span class="n">phylo_feature_importance</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">,</span>
+    <span class="n">feature_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;body_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;diet_type&quot;</span><span class="p">,</span> <span class="s2">&quot;habitat&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="shap-explanations">
+<span id="id5"></span><h2>SHAP Explanations<a class="headerlink" href="#shap-explanations" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">phylo_shap()</span></code> function computes SHAP values for a fitted treeml estimator,
+separating contributions from original features vs. phylogenetic eigenvector corrections.
+This allows you to understand how much of each prediction is driven by the biological
+features versus the phylogenetic correction.</p>
+<p>Parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code> -- A fitted treeml estimator (must have been fitted with <code class="docutils literal notranslate"><span class="pre">fit()</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code> -- Original feature matrix (without eigenvector augmentation).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">feature_names</span></code> -- Optional list of feature names. <em>Default: feature_0, feature_1, ...</em></p></li>
+</ul>
+<p>Returns a <code class="docutils literal notranslate"><span class="pre">PhyloSHAPResult</span></code> object with the following properties and methods:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">feature_shap</span></code> -- DataFrame of SHAP values for original features only.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">phylo_shap</span></code> -- DataFrame of SHAP values for phylogenetic eigenvector columns only.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">feature_importance</span></code> -- DataFrame of mean |SHAP| per feature, sorted descending.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">phylo_contribution</span></code> -- Float: fraction of total |SHAP| attributable to phylogenetic correction.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">summary()</span></code> -- DataFrame with per-feature mean |SHAP| and a <code class="docutils literal notranslate"><span class="pre">phylo_total</span></code> row.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plot(plot_type=&quot;bar&quot;)</span></code> -- Horizontal bar chart of feature vs. phylogenetic contributions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plot(plot_type=&quot;beeswarm&quot;)</span></code> -- Beeswarm plot of original features with phylo annotation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">summary_plot()</span></code> -- Standard SHAP beeswarm plot on all features (original + eigenvectors).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">force_plot(sample_idx=0)</span></code> -- SHAP force plot for a single sample.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">,</span> <span class="n">phylo_shap</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">phylo_shap</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">feature_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;body_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;diet_type&quot;</span><span class="p">])</span>
+
+<span class="c1"># What fraction of predictions comes from phylogenetic correction?</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Phylogenetic contribution: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">phylo_contribution</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Summary table</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+
+<span class="c1"># Built-in bar plot</span>
+<span class="n">result</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+
+<span class="c1"># Standard SHAP beeswarm</span>
+<span class="n">result</span><span class="o">.</span><span class="n">summary_plot</span><span class="p">()</span>
+
+<span class="c1"># Force plot for a single sample</span>
+<span class="n">result</span><span class="o">.</span><span class="n">force_plot</span><span class="p">(</span><span class="n">sample_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="model-comparison">
+<span id="id6"></span><h2>Model Comparison<a class="headerlink" href="#model-comparison" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">phylo_model_comparison()</span></code> function benchmarks multiple estimators with and without
+phylogenetic correction. For each model, it fits on the full dataset and evaluates both
+a standard (uncorrected) version and a phylo-corrected version, reporting scores and
+the delta between them.</p>
+<p>Parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code> -- Feature matrix.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">y</span></code> -- Target vector.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tree</span></code> -- Phylogenetic tree.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">species_names</span></code> -- List of species names.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">models</span></code> -- Optional dict of <code class="docutils literal notranslate"><span class="pre">{name:</span> <span class="pre">(sklearn_model,</span> <span class="pre">phylo_model)}</span></code> pairs.
+If omitted, uses all default estimators. Auto-detects regression vs classification from y.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scoring</span></code> -- Scoring metric. <em>Default: 'r2' for regression, 'accuracy' for classification</em>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_splits</span></code> -- Number of CV folds. <em>Default: 3</em>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">random_state</span></code> -- Random state for reproducibility.</p></li>
+</ul>
+<p>Returns a DataFrame with columns: <code class="docutils literal notranslate"><span class="pre">model</span></code>, <code class="docutils literal notranslate"><span class="pre">uncorrected_score</span></code>,
+<code class="docutils literal notranslate"><span class="pre">phylo_corrected_score</span></code>, <code class="docutils literal notranslate"><span class="pre">delta</span></code>.</p>
+<p>Default models compared:</p>
+<ul class="simple">
+<li><p><strong>Regression</strong>: RandomForest, GradientBoosting, SVM, KNN, ElasticNet, Ridge, Lasso</p></li>
+<li><p><strong>Classification</strong>: RandomForest, GradientBoosting, SVM, KNN</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">phylo_model_comparison</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">phylo_model_comparison</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="hyperparameter-tuning">
+<span id="id7"></span><h2>Hyperparameter Tuning<a class="headerlink" href="#hyperparameter-tuning" title="Link to this heading"></a></h2>
+<p>treeml provides wrappers around scikit-learn's <code class="docutils literal notranslate"><span class="pre">GridSearchCV</span></code> and <code class="docutils literal notranslate"><span class="pre">RandomizedSearchCV</span></code>
+that automatically forward <code class="docutils literal notranslate"><span class="pre">tree</span></code> and <code class="docutils literal notranslate"><span class="pre">species_names</span></code> to the estimator's <code class="docutils literal notranslate"><span class="pre">fit()</span></code>
+and <code class="docutils literal notranslate"><span class="pre">predict()</span></code> during cross-validation. If no <code class="docutils literal notranslate"><span class="pre">cv</span></code> argument is provided, they
+default to <code class="docutils literal notranslate"><span class="pre">PhyloDistanceCV</span></code> with 5 splits.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><strong>PhyloGridSearchCV</strong></p>
+<p>Exhaustive grid search over a parameter grid with phylogenetic cross-validation.</p>
+<p>Parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">estimator</span></code> -- A treeml estimator.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">param_grid</span></code> -- Dictionary of parameter names to lists of values.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tree</span></code> -- Phylogenetic tree.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">species_names</span></code> -- List of species names.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gene_trees</span></code> -- Optional gene trees for discordance-aware correction.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cv</span></code> -- Cross-validation strategy. <em>Default: PhyloDistanceCV(n_splits=5)</em>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scoring</span></code> -- Scoring metric. <em>Default: auto-detected from estimator type</em>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_jobs</span></code> -- Number of parallel jobs. <em>Default: None (sequential)</em>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">refit</span></code> -- Refit the best estimator on the full dataset. <em>Default: True</em>.</p></li>
+</ul>
+<p>Properties after fitting: <code class="docutils literal notranslate"><span class="pre">best_params_</span></code>, <code class="docutils literal notranslate"><span class="pre">best_score_</span></code>, <code class="docutils literal notranslate"><span class="pre">best_estimator_</span></code>, <code class="docutils literal notranslate"><span class="pre">cv_results_</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">,</span> <span class="n">PhyloGridSearchCV</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="n">search</span> <span class="o">=</span> <span class="n">PhyloGridSearchCV</span><span class="p">(</span>
+    <span class="n">estimator</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">param_grid</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">],</span>
+        <span class="s2">&quot;eigenvector_variance&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">],</span>
+    <span class="p">},</span>
+    <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span>
+    <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">search</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best params: </span><span class="si">{</span><span class="n">search</span><span class="o">.</span><span class="n">best_params_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best score: </span><span class="si">{</span><span class="n">search</span><span class="o">.</span><span class="n">best_score_</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Predict with best model</span>
+<span class="n">preds</span> <span class="o">=</span> <span class="n">search</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><strong>PhyloRandomizedSearchCV</strong></p>
+<p>Randomized search over parameter distributions with phylogenetic cross-validation.
+Useful when the parameter space is large.</p>
+<p>Additional parameters beyond PhyloGridSearchCV:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">param_distributions</span></code> -- Dictionary of parameter names to distributions or lists.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_iter</span></code> -- Number of parameter settings sampled. <em>Default: 10</em>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">random_state</span></code> -- Random state for reproducibility.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">,</span> <span class="n">PhyloRandomizedSearchCV</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">randint</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="n">search</span> <span class="o">=</span> <span class="n">PhyloRandomizedSearchCV</span><span class="p">(</span>
+    <span class="n">estimator</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">param_distributions</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="n">randint</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">300</span><span class="p">),</span>
+        <span class="s2">&quot;eigenvector_variance&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">],</span>
+    <span class="p">},</span>
+    <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span>
+    <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">,</span>
+    <span class="n">n_iter</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">search</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best params: </span><span class="si">{</span><span class="n">search</span><span class="o">.</span><span class="n">best_params_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best score: </span><span class="si">{</span><span class="n">search</span><span class="o">.</span><span class="n">best_score_</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="serialization">
+<span id="id8"></span><h2>Serialization<a class="headerlink" href="#serialization" title="Link to this heading"></a></h2>
+<p>treeml provides functions to save and load fitted estimators to disk using <code class="docutils literal notranslate"><span class="pre">joblib</span></code>.
+Model files use the <code class="docutils literal notranslate"><span class="pre">.treeml</span></code> extension and bundle the estimator with metadata
+(treeml version and estimator class name).</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><strong>save_model</strong></p>
+<p>Save a fitted treeml estimator to disk.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code> -- A fitted treeml estimator (must have been fitted with <code class="docutils literal notranslate"><span class="pre">fit()</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">path</span></code> -- File path. If it doesn't end with <code class="docutils literal notranslate"><span class="pre">.treeml</span></code>, the extension is appended.</p></li>
+</ul>
+<p>Returns the actual path the model was saved to.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">save_model</span>
+
+<span class="n">save_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;my_model.treeml&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><strong>load_model</strong></p>
+<p>Load a treeml estimator from disk. A warning is raised if the model was saved
+with a different version of treeml.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Only load model files you trust. Loading a malicious file can execute
+arbitrary code via pickle deserialization.</p>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">path</span></code> -- Path to a <code class="docutils literal notranslate"><span class="pre">.treeml</span></code> file.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_model</span>
+
+<span class="n">loaded</span> <span class="o">=</span> <span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;my_model.treeml&quot;</span><span class="p">)</span>
+<span class="n">preds</span> <span class="o">=</span> <span class="n">loaded</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="data-loading">
+<span id="id9"></span><h2>Data Loading<a class="headerlink" href="#data-loading" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">load_data()</span></code> function loads a tab-separated trait file and a phylogenetic tree
+file, returning the feature matrix, target vector, tree, and species names ready for
+use with treeml estimators.</p>
+<p>Parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">trait_file</span></code> -- Path to tab-separated file. First row is a header
+(species, trait1, trait2, ...). Subsequent rows are data. Species not found
+in the tree are silently skipped.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tree_file</span></code> -- Path to tree file (Newick or Nexus format).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">response</span></code> -- Column name to use as the target variable y. All other
+columns (except the species column) become features in X.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tree_format</span></code> -- Format of tree file. <em>Default: &quot;newick&quot;</em>.</p></li>
+</ul>
+<p>Returns a tuple: <code class="docutils literal notranslate"><span class="pre">(X,</span> <span class="pre">y,</span> <span class="pre">tree,</span> <span class="pre">species_names)</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_data</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span>
+    <span class="n">trait_file</span><span class="o">=</span><span class="s2">&quot;traits.tsv&quot;</span><span class="p">,</span>
+    <span class="n">tree_file</span><span class="o">=</span><span class="s2">&quot;species.nwk&quot;</span><span class="p">,</span>
+    <span class="n">response</span><span class="o">=</span><span class="s2">&quot;body_mass&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The trait file should look like:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>species<span class="w"> </span>body_mass<span class="w">       </span>diet_type<span class="w">       </span>habitat
+Homo_sapiens<span class="w">    </span><span class="m">70</span>.0<span class="w">    </span><span class="m">1</span><span class="w">       </span><span class="m">2</span>
+Pan_troglodytes<span class="w"> </span><span class="m">52</span>.0<span class="w">    </span><span class="m">1</span><span class="w">       </span><span class="m">1</span>
+Gorilla_gorilla<span class="w"> </span><span class="m">160</span>.0<span class="w">   </span><span class="m">1</span><span class="w">       </span><span class="m">1</span>
+Mus_musculus<span class="w">    </span><span class="m">0</span>.02<span class="w">    </span><span class="m">0</span><span class="w">       </span><span class="m">0</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="all-estimators">
+<span id="id10"></span><h2>All Estimators<a class="headerlink" href="#all-estimators" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 35.0%" />
+<col style="width: 65.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Estimator</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PhyloRandomForestRegressor</span></code></p></td>
+<td><p>Random Forest regressor with phylogenetic correction. Supports eigenvectors, feature whitening, and target whitening.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PhyloGradientBoostingRegressor</span></code></p></td>
+<td><p>Gradient Boosting regressor with phylogenetic correction. Supports eigenvectors, feature whitening, and target whitening.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PhyloSVMRegressor</span></code></p></td>
+<td><p>SVM regressor (<code class="docutils literal notranslate"><span class="pre">SVR</span></code>) with phylogenetic correction. Parameters: <code class="docutils literal notranslate"><span class="pre">kernel</span></code>, <code class="docutils literal notranslate"><span class="pre">C</span></code>, <code class="docutils literal notranslate"><span class="pre">epsilon</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PhyloKNNRegressor</span></code></p></td>
+<td><p>K-Nearest Neighbors regressor with phylogenetic correction. Auto-clamps <code class="docutils literal notranslate"><span class="pre">n_neighbors</span></code> to <code class="docutils literal notranslate"><span class="pre">n_samples</span> <span class="pre">-</span> <span class="pre">1</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PhyloRidge</span></code></p></td>
+<td><p>Ridge regression with phylogenetic correction. Parameter: <code class="docutils literal notranslate"><span class="pre">alpha</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PhyloLasso</span></code></p></td>
+<td><p>Lasso regression with phylogenetic correction. Parameter: <code class="docutils literal notranslate"><span class="pre">alpha</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PhyloElasticNet</span></code></p></td>
+<td><p>Elastic Net with phylogenetic correction. Parameters: <code class="docutils literal notranslate"><span class="pre">alpha</span></code>, <code class="docutils literal notranslate"><span class="pre">l1_ratio</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PhyloRandomForestClassifier</span></code></p></td>
+<td><p>Random Forest classifier with phylogenetic eigenvector features. Provides <code class="docutils literal notranslate"><span class="pre">predict_proba()</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PhyloGradientBoostingClassifier</span></code></p></td>
+<td><p>Gradient Boosting classifier with phylogenetic eigenvector features. Provides <code class="docutils literal notranslate"><span class="pre">predict_proba()</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PhyloSVMClassifier</span></code></p></td>
+<td><p>SVM classifier (<code class="docutils literal notranslate"><span class="pre">SVC</span></code>) with phylogenetic eigenvector features. <code class="docutils literal notranslate"><span class="pre">probability=True</span></code> by default.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PhyloKNNClassifier</span></code></p></td>
+<td><p>KNN classifier with phylogenetic eigenvector features. Provides <code class="docutils literal notranslate"><span class="pre">predict_proba()</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PhyloDistanceCV</span></code></p></td>
+<td><p>Distance-based phylogenetic cross-validation splitter.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PhyloCladeCV</span></code></p></td>
+<td><p>Clade-based phylogenetic cross-validation splitter.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PhyloGridSearchCV</span></code></p></td>
+<td><p>Grid search with phylogenetic cross-validation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PhyloRandomizedSearchCV</span></code></p></td>
+<td><p>Randomized search with phylogenetic cross-validation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">phylo_feature_importance()</span></code></p></td>
+<td><p>Compare permutation importance with and without phylogenetic correction.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">phylo_shap()</span></code></p></td>
+<td><p>Compute SHAP values separating feature vs. phylogenetic contributions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">phylo_model_comparison()</span></code></p></td>
+<td><p>Benchmark multiple estimators with and without phylogenetic correction.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">save_model()</span></code></p></td>
+<td><p>Save a fitted treeml estimator to a <code class="docutils literal notranslate"><span class="pre">.treeml</span></code> file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">load_model()</span></code></p></td>
+<td><p>Load a treeml estimator from a <code class="docutils literal notranslate"><span class="pre">.treeml</span></code> file.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">load_data()</span></code></p></td>
+<td><p>Load trait data and phylogenetic tree from files.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../about/index.html" class="btn btn-neutral float-left" title="About" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../tutorials/index.html" class="btn btn-neutral float-right" title="Tutorials" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026 Jacob L. Steenwyk.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

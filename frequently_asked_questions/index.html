@@ -44,7 +44,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../about/index.html">About</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage/index.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/index.html">Advanced Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../change_log/index.html">Change log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../other_software/index.html">Other software</a></li>
@@ -80,7 +80,8 @@
 <p>Species are related through evolution. Closely related species tend to have similar
 traits not because of shared selective pressures but because they inherited those
 traits from a common ancestor. Standard ML methods assume observations are independent,
-which species data violates.</p>
+which species data violates. Ignoring this non-independence can inflate performance
+metrics and lead to biased inferences.</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
@@ -88,19 +89,22 @@ which species data violates.</p>
 <p>PGLS (Phylogenetic Generalized Least Squares) is a linear method. It works well for
 linear relationships, but many biological relationships are non-linear. treeml extends
 phylogenetic correction to non-linear ML methods like Random Forest, Gradient Boosting,
-and SVM.</p>
+and SVM while remaining compatible with scikit-learn workflows.</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 <p><strong>When should I use phylogenetic correction?</strong></p>
 <p>Whenever your rows are species (or populations, strains) that are related by a
-phylogenetic tree and you want to avoid confounding due to shared ancestry.</p>
+phylogenetic tree and you want to avoid confounding due to shared ancestry. This
+applies to both regression and classification tasks.</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 <p><strong>What tree format does treeml accept?</strong></p>
 <p>treeml reads trees via BioPython's <code class="docutils literal notranslate"><span class="pre">Phylo</span></code> module. Newick and Nexus formats are
-supported. Trees should be rooted and have branch lengths for best results.</p>
+supported. Trees should be rooted and have branch lengths for best results. treeml
+will warn if the tree appears unrooted (root has more than 2 children) or if any
+terminals have missing branch lengths.</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
@@ -112,10 +116,45 @@ that automatically bind tree and species_names.</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
+<p><strong>What is eigenvector augmentation?</strong></p>
+<p>treeml extracts eigenvectors from the phylogenetic variance-covariance (VCV) matrix
+using PCoA-like decomposition (double-centering followed by eigendecomposition).
+These eigenvectors capture phylogenetic structure and are appended as additional
+features. The <code class="docutils literal notranslate"><span class="pre">eigenvector_variance</span></code> parameter controls how many eigenvectors are
+retained based on the fraction of variance explained (default: 90%).</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><strong>What is phylogenetic whitening?</strong></p>
+<p>Phylogenetic whitening transforms the data using the Cholesky decomposition of the
+VCV matrix. Under a Brownian motion model of evolution, this transformation removes
+phylogenetic autocorrelation, making the observations independent. treeml can whiten
+both features (<code class="docutils literal notranslate"><span class="pre">whiten_features=True</span></code>) and the target variable
+(<code class="docutils literal notranslate"><span class="pre">whiten_target=True</span></code>, regressors only).</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><strong>What is the difference between PhyloDistanceCV and PhyloCladeCV?</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">PhyloDistanceCV</span></code> groups species by phylogenetic distance using hierarchical clustering
+(UPGMA) and assigns groups to folds. <code class="docutils literal notranslate"><span class="pre">PhyloCladeCV</span></code> holds out entire monophyletic clades,
+which is a stricter separation because the entire evolutionary lineage is held out.
+<code class="docutils literal notranslate"><span class="pre">PhyloCladeCV</span></code> may produce uneven fold sizes depending on tree topology.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><strong>Can I use gene trees for discordance-aware correction?</strong></p>
+<p>Yes. All estimators accept an optional <code class="docutils literal notranslate"><span class="pre">gene_trees</span></code> argument. When provided, the VCV
+matrix is constructed accounting for gene tree discordance (e.g., due to incomplete
+lineage sorting) rather than using only the species tree.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
 <p><strong>I am having trouble installing treeml, what should I do?</strong></p>
 <p>Please install treeml using a virtual environment as directed in the installation
-instructions. If you are still running into issues after installing in a virtual
-environment, please contact the developer via <a class="reference external" href="https://jlsteenwyk.com/contact.html">email</a> or open a GitHub <a class="reference external" href="https://github.com/jlsteenwyk/treeml/issues">issue</a>.</p>
+instructions. treeml requires Python &gt;= 3.11. If you are still running into issues
+after installing in a virtual environment, please contact the developer via <a class="reference external" href="https://jlsteenwyk.com/contact.html">email</a>
+or open a GitHub <a class="reference external" href="https://github.com/jlsteenwyk/treeml/issues">issue</a>.</p>
+<hr class="docutils" />
 </section>
 
 
