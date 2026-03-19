@@ -1,43 +1,73 @@
-.. _about:
-
 About
 =====
 
-treeml provides phylogenetic machine learning estimators that are compatible with
-scikit-learn. It accounts for the evolutionary non-independence of species when
-training ML models on comparative data.
+^^^^^
 
-Standard machine learning methods assume that observations are independent. However,
-species are related through evolution -- closely related species tend to have similar
-traits not because of shared selective pressures but because they inherited those traits
-from a common ancestor. treeml corrects for this non-independence using phylogenetic
-variance-covariance matrices, eigenvector augmentation, and phylogenetic whitening,
-extending phylogenetic correction to non-linear ML methods like Random Forest,
-Gradient Boosting, and SVM.
+**Tree** **M**\achine **L**\earning (**treeml**) was developed by
+`Jacob L. Steenwyk <https://jlsteenwyk.github.io/>`_ to address a fundamental challenge
+in comparative biology: species are not independent data points due to shared evolutionary history.
+
+Standard machine learning methods assume that observations are independent. However, closely related
+species tend to have similar traits not because of shared selective pressures but because they
+inherited those traits from a common ancestor. This phylogenetic non-independence can inflate
+performance metrics, introduce confounding, and lead to biased inferences when species-level data
+are used as training observations.
+
+In light of these challenges, we developed treeml, which extends phylogenetic correction to non-linear
+machine learning methods. treeml achieves this by (1) augmenting feature matrices with phylogenetic
+eigenvectors, (2) whitening features and targets using the Cholesky decomposition of the phylogenetic
+variance-covariance matrix, and (3) providing phylogenetic-aware cross-validation splitters that
+prevent related species from leaking information between training and test folds. Our validation
+against R's ``ape`` package demonstrates that all core calculations match to machine epsilon
+(:ref:`see details here <validation>`).
+
+|
+
+The Developer
+--------------
+
+^^^^^
+
+treeml is developed and maintained by `Jacob L. Steenwyk <https://jlsteenwyk.github.io/>`_.
 
 |
 
-How it Works
-------------
+|JLSteenwyk|
 
-treeml estimators account for evolutionary relationships using three approaches:
+|GoogleScholarSteenwyk| |GitHubSteenwyk| |TwitterSteenwyk|
 
-1. **Phylogenetic eigenvectors** -- Eigenvectors are extracted from the phylogenetic
-   variance-covariance (VCV) matrix via PCoA and appended to the feature matrix,
-   allowing the model to learn phylogenetic structure.
+`Jacob L. Steenwyk <https://jlsteenwyk.github.io/>`_ is an Assistant Professor in the
+`Department of Ecology and Evolutionary Biology
+<https://www.colorado.edu/ebio/>`_ at the
+`University of Colorado Boulder <https://www.colorado.edu/>`_.
+His research focuses on understanding the evolutionary genomics of diverse organisms.
+Beyond research, Steenwyk aims to make education more accessible
+through diverse avenues of community engagement. Find out more information at his
+`personal website <http://jlsteenwyk.github.io/>`_.
 
-2. **Phylogenetic whitening** -- The target variable and/or feature matrix are
-   transformed using the Cholesky decomposition of the VCV matrix, removing
-   phylogenetic autocorrelation before model training.
+.. |JLSteenwyk| image:: ../_static/img/Steenwyk.jpg
+   :width: 35%
 
-3. **Phylogenetic cross-validation** -- Specialized CV splitters (distance-based and
-   clade-based) ensure that closely related species do not leak information between
-   training and test folds.
+.. |GoogleScholarSteenwyk| image:: ../_static/img/GoogleScholar.png
+   :target: https://scholar.google.com/citations?user=VXV2j6gAAAAJ&hl=en
+   :width: 4.5%
+
+.. |TwitterSteenwyk| image:: ../_static/img/Twitter.png
+   :target: https://twitter.com/jlsteenwyk
+   :width: 4.5%
+
+.. |GitHubSteenwyk| image:: ../_static/img/Github.png
+   :target: https://github.com/JLSteenwyk
+   :width: 4.5%
 
 |
+
+.. _validation:
 
 Validation against R
 ---------------------
+
+^^^^^
 
 All core phylogenetic calculations in treeml have been validated against canonical
 R implementations from the ``ape`` package. Using an 8-species mammalian phylogeny,
@@ -76,14 +106,9 @@ and ``validate_against_r.py`` compares them against treeml's output.
 
 |
 
-The Developer
--------------
-
-treeml is developed and maintained by `Jacob L. Steenwyk <https://jlsteenwyk.github.io/>`_.
-
-|
-
 Citation
 --------
+
+^^^^^
 
 If you use treeml, please cite: [TBD]

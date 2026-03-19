@@ -16,8 +16,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    env:
-      PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
 
     steps:
       - name: Checkout
@@ -33,7 +31,7 @@ jobs:
       - name: Install build tools
         run: |
           python -m pip install --upgrade pip
-          python -m pip install build twine
+          python -m pip install setuptools wheel twine
 
       - name: Validate release version
         run: |
@@ -56,7 +54,9 @@ jobs:
         run: python scripts/check_version_sync.py
 
       - name: Build distribution
-        run: python -m build
+        run: |
+          rm -rf dist
+          python3 setup.py sdist bdist_wheel --universal
 
       - name: Check distribution metadata
         run: twine check dist/*
@@ -67,17 +67,11 @@ jobs:
           name: dist-${{ env.TAG_VERSION }}
           path: dist/*
 
-      - name: Ensure PYPI_API_TOKEN is configured
-        if: ${{ env.PYPI_API_TOKEN == '' }}
-        run: |
-          echo "PYPI_API_TOKEN is not configured. Add it as a repository secret."
-          exit 1
-
-      - name: Publish to PyPI (token)
-        if: ${{ env.PYPI_API_TOKEN != '' }}
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          password: ${{ env.PYPI_API_TOKEN }}
+      - name: Publish to PyPI
+        env:
+          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+        run: twine upload dist/* -r pypi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
