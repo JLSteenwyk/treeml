@@ -47,27 +47,22 @@ jobs:
         fail_ci_if_error: false
 
   docs:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout
-        uses: actions/checkout@master
-        with:
-          persist-credentials: false
+        uses: actions/checkout@v4
       - name: Setup Python
-        uses: actions/setup-python@master
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.11
-      - name: Install pipenv
-        uses: dschep/install-pipenv-action@v1
+          python-version: "3.11"
       - name: Build docs
         run: |
+          pip install -r docs/requirements.txt
           cd docs
-          pipenv install
-          pipenv run make html
-          cd ..
+          make html
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@releases/v3
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages
-          FOLDER: docs/_build/html
+          branch: gh-pages
+          folder: docs/_build/html
