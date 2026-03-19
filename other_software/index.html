@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FAQ &mdash; treeml  documentation</title>
+  <title>Other software &mdash; treeml  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=83f1d849" />
@@ -20,7 +20,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="Other software" href="../other_software/index.html" /> 
+    <link rel="next" title="FAQ" href="../frequently_asked_questions/index.html" />
+    <link rel="prev" title="Change log" href="../change_log/index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -47,8 +48,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../usage/index.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../change_log/index.html">Change log</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../other_software/index.html">Other software</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">FAQ</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Other software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../frequently_asked_questions/index.html">FAQ</a></li>
 </ul>
 
         </div>
@@ -65,7 +66,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">FAQ</li>
+      <li class="breadcrumb-item active">Other software</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -74,55 +75,20 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="faq">
-<span id="id1"></span><h1>FAQ<a class="headerlink" href="#faq" title="Link to this heading"></a></h1>
-<p><strong>What is phylogenetic non-independence?</strong></p>
-<p>Species are related through evolution. Closely related species tend to have similar
-traits not because of shared selective pressures but because they inherited those
-traits from a common ancestor. Standard ML methods assume observations are independent,
-which species data violates.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<p><strong>Why not just use PGLS?</strong></p>
-<p>PGLS (Phylogenetic Generalized Least Squares) is a linear method. It works well for
-linear relationships, but many biological relationships are non-linear. treeml extends
-phylogenetic correction to non-linear ML methods like Random Forest, Gradient Boosting,
-and SVM.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<p><strong>When should I use phylogenetic correction?</strong></p>
-<p>Whenever your rows are species (or populations, strains) that are related by a
-phylogenetic tree and you want to avoid confounding due to shared ancestry.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<p><strong>What tree format does treeml accept?</strong></p>
-<p>treeml reads trees via BioPython's <code class="docutils literal notranslate"><span class="pre">Phylo</span></code> module. Newick and Nexus formats are
-supported. Trees should be rooted and have branch lengths for best results.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<p><strong>Can I use treeml with scikit-learn's cross_val_score and GridSearchCV?</strong></p>
-<p>Yes. All treeml estimators are scikit-learn compatible. Use <code class="docutils literal notranslate"><span class="pre">PhyloDistanceCV</span></code> or
-<code class="docutils literal notranslate"><span class="pre">PhyloCladeCV</span></code> as the <code class="docutils literal notranslate"><span class="pre">cv</span></code> argument to ensure phylogenetic-aware splitting.
-<code class="docutils literal notranslate"><span class="pre">PhyloGridSearchCV</span></code> and <code class="docutils literal notranslate"><span class="pre">PhyloRandomizedSearchCV</span></code> provide convenience wrappers
-that automatically bind tree and species_names.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<p><strong>I am having trouble installing treeml, what should I do?</strong></p>
-<p>Please install treeml using a virtual environment as directed in the installation
-instructions. If you are still running into issues after installing in a virtual
-environment, please contact the developer via <a class="reference external" href="https://jlsteenwyk.com/contact.html">email</a> or open a GitHub <a class="reference external" href="https://github.com/jlsteenwyk/treeml/issues">issue</a>.</p>
+  <section id="other-software">
+<span id="id1"></span><h1>Other software<a class="headerlink" href="#other-software" title="Link to this heading"></a></h1>
+<p>We are grateful that you are exploring our software! If this software is of interest
+to you, our other software will likely be too. Please follow this link
+<a class="reference external" href="https://jlsteenwyk.com/software.html">link</a>
+to see other software we have developed!</p>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../other_software/index.html" class="btn btn-neutral float-left" title="Other software" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../change_log/index.html" class="btn btn-neutral float-left" title="Change log" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../frequently_asked_questions/index.html" class="btn btn-neutral float-right" title="FAQ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

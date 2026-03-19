@@ -6,10 +6,10 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Change Log &mdash; treeml  documentation</title>
+  <title>Change log &mdash; treeml  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
-      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=970f03b7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=83f1d849" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
@@ -20,7 +20,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Frequently Asked Questions" href="../frequently_asked_questions/index.html" />
+    <link rel="next" title="Other software" href="../other_software/index.html" />
     <link rel="prev" title="Tutorials" href="../tutorials/index.html" /> 
 </head>
 
@@ -47,11 +47,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../about/index.html">About</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../usage/index.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Change Log</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#v0-1-0">v0.1.0</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../frequently_asked_questions/index.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other_software/index.html">Other software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../frequently_asked_questions/index.html">FAQ</a></li>
 </ul>
 
         </div>
@@ -68,7 +66,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Change Log</li>
+      <li class="breadcrumb-item active">Change log</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -78,17 +76,26 @@
            <div itemprop="articleBody">
              
   <section id="change-log">
-<h1>Change Log<a class="headerlink" href="#change-log" title="Link to this heading"></a></h1>
-<section id="v0-1-0">
-<h2>v0.1.0<a class="headerlink" href="#v0-1-0" title="Link to this heading"></a></h2>
+<span id="id1"></span><h1>Change log<a class="headerlink" href="#change-log" title="Link to this heading"></a></h1>
+<p>Major changes to treeml are summarized here.</p>
+<p><strong>0.1.0</strong>
+Initial release with:</p>
 <ul class="simple">
-<li><p>Initial release</p></li>
 <li><p>PhyloRandomForestRegressor and PhyloRandomForestClassifier</p></li>
-<li><p>PhyloDistanceCV and PhyloCladeCV</p></li>
-<li><p>phylo_feature_importance() report</p></li>
+<li><p>PhyloGradientBoostingRegressor and PhyloGradientBoostingClassifier</p></li>
+<li><p>PhyloSVMRegressor and PhyloSVMClassifier</p></li>
+<li><p>PhyloKNNRegressor and PhyloKNNClassifier</p></li>
+<li><p>PhyloRidge, PhyloLasso, and PhyloElasticNet regressors</p></li>
+<li><p>PhyloDistanceCV and PhyloCladeCV cross-validation splitters</p></li>
+<li><p>PhyloGridSearchCV and PhyloRandomizedSearchCV hyperparameter tuning</p></li>
+<li><p>phylo_feature_importance() comparative report</p></li>
+<li><p>phylo_shap() SHAP explainability with PhyloSHAPResult container</p></li>
+<li><p>phylo_model_comparison() benchmarking utility</p></li>
+<li><p>save_model() and load_model() serialization</p></li>
 <li><p>load_data() convenience function</p></li>
+<li><p>Eigenvector augmentation and phylogenetic whitening</p></li>
+<li><p>Validated against R's ape package to machine epsilon precision</p></li>
 </ul>
-</section>
 </section>
 
 
@@ -96,7 +103,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../tutorials/index.html" class="btn btn-neutral float-left" title="Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../frequently_asked_questions/index.html" class="btn btn-neutral float-right" title="Frequently Asked Questions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../other_software/index.html" class="btn btn-neutral float-right" title="Other software" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -9,7 +9,7 @@
   <title>About &mdash; treeml  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
-      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=970f03b7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=83f1d849" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
@@ -45,14 +45,17 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">About</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#how-it-works">How it Works</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#validation-against-r">Validation against R</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-developer">The Developer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#citation">Citation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../usage/index.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../change_log/index.html">Change Log</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../frequently_asked_questions/index.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../change_log/index.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other_software/index.html">Other software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../frequently_asked_questions/index.html">FAQ</a></li>
 </ul>
 
         </div>
@@ -79,10 +82,38 @@
            <div itemprop="articleBody">
              
   <section id="about">
-<h1>About<a class="headerlink" href="#about" title="Link to this heading"></a></h1>
+<span id="id1"></span><h1>About<a class="headerlink" href="#about" title="Link to this heading"></a></h1>
 <p>treeml provides phylogenetic machine learning estimators that are compatible with
 scikit-learn. It accounts for the evolutionary non-independence of species when
 training ML models on comparative data.</p>
+<p>Standard machine learning methods assume that observations are independent. However,
+species are related through evolution -- closely related species tend to have similar
+traits not because of shared selective pressures but because they inherited those traits
+from a common ancestor. treeml corrects for this non-independence using phylogenetic
+variance-covariance matrices, eigenvector augmentation, and phylogenetic whitening,
+extending phylogenetic correction to non-linear ML methods like Random Forest,
+Gradient Boosting, and SVM.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<section id="how-it-works">
+<h2>How it Works<a class="headerlink" href="#how-it-works" title="Link to this heading"></a></h2>
+<p>treeml estimators account for evolutionary relationships using three approaches:</p>
+<ol class="arabic simple">
+<li><p><strong>Phylogenetic eigenvectors</strong> -- Eigenvectors are extracted from the phylogenetic
+variance-covariance (VCV) matrix via PCoA and appended to the feature matrix,
+allowing the model to learn phylogenetic structure.</p></li>
+<li><p><strong>Phylogenetic whitening</strong> -- The target variable and/or feature matrix are
+transformed using the Cholesky decomposition of the VCV matrix, removing
+phylogenetic autocorrelation before model training.</p></li>
+<li><p><strong>Phylogenetic cross-validation</strong> -- Specialized CV splitters (distance-based and
+clade-based) ensure that closely related species do not leak information between
+training and test folds.</p></li>
+</ol>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
 <section id="validation-against-r">
 <h2>Validation against R<a class="headerlink" href="#validation-against-r" title="Link to this heading"></a></h2>
 <p>All core phylogenetic calculations in treeml have been validated against canonical
@@ -131,6 +162,16 @@ maximum absolute differences at machine epsilon (1e-13 to 1e-14).</p>
 <p>The validation scripts are available in the <code class="docutils literal notranslate"><span class="pre">validation/</span></code> directory of the
 repository. <code class="docutils literal notranslate"><span class="pre">r_reference.R</span></code> computes reference values using R's <code class="docutils literal notranslate"><span class="pre">ape</span></code> package,
 and <code class="docutils literal notranslate"><span class="pre">validate_against_r.py</span></code> compares them against treeml's output.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="the-developer">
+<h2>The Developer<a class="headerlink" href="#the-developer" title="Link to this heading"></a></h2>
+<p>treeml is developed and maintained by <a class="reference external" href="https://jlsteenwyk.github.io/">Jacob L. Steenwyk</a>.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
 </section>
 <section id="citation">
 <h2>Citation<a class="headerlink" href="#citation" title="Link to this heading"></a></h2>

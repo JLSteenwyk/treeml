@@ -9,7 +9,7 @@
   <title>treeml &mdash; treeml  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
-      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=970f03b7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=83f1d849" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
@@ -46,8 +46,9 @@
 <li class="toctree-l1"><a class="reference internal" href="about/index.html">About</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage/index.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Tutorials</a></li>
-<li class="toctree-l1"><a class="reference internal" href="change_log/index.html">Change Log</a></li>
-<li class="toctree-l1"><a class="reference internal" href="frequently_asked_questions/index.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="change_log/index.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="other_software/index.html">Other software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frequently_asked_questions/index.html">FAQ</a></li>
 </ul>
 
         </div>
@@ -77,9 +78,12 @@
 <h1>treeml<a class="headerlink" href="#treeml" title="Link to this heading"></a></h1>
 <p>Phylogenetic machine learning: scikit-learn estimators that account for evolutionary
 non-independence among species.</p>
+<p>If you found treeml useful, please cite: [TBD]</p>
 <section id="quick-start">
 <h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading"></a></h2>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>treeml
+<p>These two lines represent the simplest method to rapidly install and run treeml.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># install</span>
+pip<span class="w"> </span>install<span class="w"> </span>treeml
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">,</span> <span class="n">PhyloDistanceCV</span>
@@ -95,23 +99,116 @@ non-independence among species.</p>
 <span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">cv</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Below are more detailed instructions, including alternative installation methods.</p>
+<p><strong>1) Installation</strong></p>
+<p>To help ensure treeml can be installed using your favorite workflow, we have made treeml available from pip and source.</p>
+<p><strong>Install from pip</strong></p>
+<p>To install from pip, use the following commands:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># create virtual environment</span>
+python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
+<span class="c1"># activate virtual environment</span>
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate
+<span class="c1"># install treeml</span>
+pip<span class="w"> </span>install<span class="w"> </span>treeml
+</pre></div>
+</div>
+<p><strong>Note: the virtual environment must be activated to use treeml.</strong></p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><strong>Install from source</strong></p>
+<p>Similarly, to install from source, we strongly recommend using a virtual environment. To do so, use the following commands:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># download</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/JLSteenwyk/treeml.git
+<span class="nb">cd</span><span class="w"> </span>treeml/
+<span class="c1"># create virtual environment</span>
+python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
+<span class="c1"># activate virtual environment</span>
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate
+<span class="c1"># install</span>
+pip<span class="w"> </span>install<span class="w"> </span>.
+</pre></div>
+</div>
+<p>To deactivate your virtual environment, use the following command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># deactivate virtual environment</span>
+deactivate
+</pre></div>
+</div>
+<p><strong>Note: the virtual environment must be activated to use treeml.</strong></p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><strong>2) Basic Usage</strong></p>
+<p>To use treeml, import the desired estimator and fit it with a phylogenetic tree:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloRandomForestRegressor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Bio</span><span class="w"> </span><span class="kn">import</span> <span class="n">Phylo</span>
+
+<span class="n">tree</span> <span class="o">=</span> <span class="n">Phylo</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;species.nwk&quot;</span><span class="p">,</span> <span class="s2">&quot;newick&quot;</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="about/index.html">About</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="about/index.html#how-it-works">How it Works</a></li>
 <li class="toctree-l2"><a class="reference internal" href="about/index.html#validation-against-r">Validation against R</a></li>
+<li class="toctree-l2"><a class="reference internal" href="about/index.html#the-developer">The Developer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="about/index.html#citation">Citation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="usage/index.html">Usage</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="usage/index.html#api-reference">API Reference</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="usage/index.html#estimators">Estimators</a></li>
-<li class="toctree-l3"><a class="reference internal" href="usage/index.html#cross-validation">Cross-Validation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="usage/index.html#feature-importance">Feature Importance</a></li>
-<li class="toctree-l3"><a class="reference internal" href="usage/index.html#shap-explanations">SHAP Explanations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="usage/index.html#model-comparison">Model Comparison</a></li>
-<li class="toctree-l3"><a class="reference internal" href="usage/index.html#hyperparameter-tuning">Hyperparameter Tuning</a></li>
-<li class="toctree-l3"><a class="reference internal" href="usage/index.html#serialization">Serialization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="usage/index.html#data-loading">Data Loading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/index.html#estimators">Estimators</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage/index.html#regressors">Regressors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/index.html#classifiers">Classifiers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/index.html#common-parameters">Common Parameters</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="usage/index.html#phylorandomforestregressor">PhyloRandomForestRegressor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="usage/index.html#phylogradientboostingregressor">PhyloGradientBoostingRegressor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="usage/index.html#phylosvmregressor">PhyloSVMRegressor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="usage/index.html#phyloknnregressor">PhyloKNNRegressor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="usage/index.html#phyloridge">PhyloRidge</a></li>
+<li class="toctree-l4"><a class="reference internal" href="usage/index.html#phylolasso">PhyloLasso</a></li>
+<li class="toctree-l4"><a class="reference internal" href="usage/index.html#phyloelasticnet">PhyloElasticNet</a></li>
+<li class="toctree-l4"><a class="reference internal" href="usage/index.html#phylorandomforestclassifier">PhyloRandomForestClassifier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="usage/index.html#phylogradientboostingclassifier">PhyloGradientBoostingClassifier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="usage/index.html#phylosvmclassifier">PhyloSVMClassifier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="usage/index.html#phyloknnclassifier">PhyloKNNClassifier</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="usage/index.html#cross-validation">Cross-Validation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage/index.html#phylodistancecv">PhyloDistanceCV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/index.html#phylocladecv">PhyloCladeCV</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="usage/index.html#feature-importance">Feature Importance</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage/index.html#phylo-feature-importance">phylo_feature_importance</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="usage/index.html#shap-explanations">SHAP Explanations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage/index.html#phylo-shap">phylo_shap</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="usage/index.html#model-comparison">Model Comparison</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage/index.html#phylo-model-comparison">phylo_model_comparison</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="usage/index.html#hyperparameter-tuning">Hyperparameter Tuning</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage/index.html#phylogridsearchcv">PhyloGridSearchCV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/index.html#phylorandomizedsearchcv">PhyloRandomizedSearchCV</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="usage/index.html#serialization">Serialization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage/index.html#save-model-load-model">save_model / load_model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="usage/index.html#data-loading">Data Loading</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage/index.html#load-data">load_data</a></li>
 </ul>
 </li>
 </ul>
@@ -122,20 +219,13 @@ non-independence among species.</p>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/index.html#why-phylogenetic-correction-matters">3. Why phylogenetic correction matters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/index.html#phylogenetic-cross-validation">4. Phylogenetic cross-validation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/index.html#feature-importance-finding-real-signal">5. Feature importance: Finding real signal</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials/index.html#predicting-new-species">6. Predicting new species</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials/index.html#discordance-aware-correction">7. Discordance-aware correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/index.html#shap-explanations">6. SHAP explanations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/index.html#hyperparameter-tuning">7. Hyperparameter tuning</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="change_log/index.html">Change Log</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="change_log/index.html#v0-1-0">v0.1.0</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="frequently_asked_questions/index.html">Frequently Asked Questions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="frequently_asked_questions/index.html#what-is-phylogenetic-non-independence">What is phylogenetic non-independence?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="frequently_asked_questions/index.html#why-not-just-use-pgls">Why not just use PGLS?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="frequently_asked_questions/index.html#when-should-i-use-phylogenetic-correction">When should I use phylogenetic correction?</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="change_log/index.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="other_software/index.html">Other software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frequently_asked_questions/index.html">FAQ</a></li>
 </ul>
 </div>
 </section>

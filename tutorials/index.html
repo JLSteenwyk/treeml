@@ -9,7 +9,7 @@
   <title>Tutorials &mdash; treeml  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
-      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=970f03b7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=83f1d849" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
@@ -20,7 +20,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Change Log" href="../change_log/index.html" />
+    <link rel="next" title="Change log" href="../change_log/index.html" />
     <link rel="prev" title="Usage" href="../usage/index.html" /> 
 </head>
 
@@ -52,12 +52,13 @@
 <li class="toctree-l2"><a class="reference internal" href="#why-phylogenetic-correction-matters">3. Why phylogenetic correction matters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#phylogenetic-cross-validation">4. Phylogenetic cross-validation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#feature-importance-finding-real-signal">5. Feature importance: Finding real signal</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#predicting-new-species">6. Predicting new species</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#discordance-aware-correction">7. Discordance-aware correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#shap-explanations">6. SHAP explanations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hyperparameter-tuning">7. Hyperparameter tuning</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../change_log/index.html">Change Log</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../frequently_asked_questions/index.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../change_log/index.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other_software/index.html">Other software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../frequently_asked_questions/index.html">FAQ</a></li>
 </ul>
 
         </div>
@@ -91,49 +92,171 @@
 </div>
 <section id="quick-start-predicting-a-phenotype">
 <h2>1. Quick start: Predicting a phenotype<a class="headerlink" href="#quick-start-predicting-a-phenotype" title="Link to this heading"></a></h2>
-<p>Coming soon.</p>
+<p>This tutorial demonstrates how to use treeml to predict a continuous phenotype
+while accounting for phylogenetic non-independence.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">,</span> <span class="n">load_data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">cross_val_score</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloDistanceCV</span>
+
+<span class="c1"># Load data</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span>
+    <span class="n">trait_file</span><span class="o">=</span><span class="s2">&quot;traits.tsv&quot;</span><span class="p">,</span>
+    <span class="n">tree_file</span><span class="o">=</span><span class="s2">&quot;species.nwk&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Create phylogenetic estimator</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># Fit with phylogenetic correction</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">species_names</span><span class="p">)</span>
+
+<span class="c1"># Evaluate with phylogenetic cross-validation</span>
+<span class="n">cv</span> <span class="o">=</span> <span class="n">PhyloDistanceCV</span><span class="p">(</span><span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">species_names</span><span class="p">,</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">cv</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CV R² scores: </span><span class="si">{</span><span class="n">scores</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mean R²: </span><span class="si">{</span><span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> ± </span><span class="si">{</span><span class="n">scores</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 </section>
 <section id="classification-predicting-discrete-traits">
 <h2>2. Classification: Predicting discrete traits<a class="headerlink" href="#classification-predicting-discrete-traits" title="Link to this heading"></a></h2>
-<p>Coming soon.</p>
+<p>This tutorial demonstrates how to classify discrete traits (e.g., habitat type,
+diet category) using phylogenetic-aware classifiers.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloRandomForestClassifier</span><span class="p">,</span> <span class="n">PhyloDistanceCV</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">cross_val_score</span>
+
+<span class="c1"># Create classifier</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloRandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># Fit and evaluate</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">species_names</span><span class="p">)</span>
+<span class="n">cv</span> <span class="o">=</span> <span class="n">PhyloDistanceCV</span><span class="p">(</span><span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">species_names</span><span class="p">,</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">cv</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CV accuracy: </span><span class="si">{</span><span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> ± </span><span class="si">{</span><span class="n">scores</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 </section>
 <section id="why-phylogenetic-correction-matters">
 <h2>3. Why phylogenetic correction matters<a class="headerlink" href="#why-phylogenetic-correction-matters" title="Link to this heading"></a></h2>
-<p>Coming soon.</p>
+<p>When species are used as observations, ignoring phylogenetic relationships can
+inflate performance metrics. This tutorial compares corrected vs. uncorrected
+models.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">phylo_model_comparison</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">phylo_model_comparison</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">species_names</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">phylo_model_comparison()</span></code> function benchmarks multiple estimators with
+and without phylogenetic correction and returns a DataFrame showing the
+cross-validation scores and the delta between approaches.</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 </section>
 <section id="phylogenetic-cross-validation">
 <h2>4. Phylogenetic cross-validation<a class="headerlink" href="#phylogenetic-cross-validation" title="Link to this heading"></a></h2>
-<p>Coming soon.</p>
+<p>Standard k-fold cross-validation can leak phylogenetic signal between folds.
+treeml provides two phylogenetic-aware CV strategies.</p>
+<p><strong>Distance-based CV:</strong> Groups species by phylogenetic distance using hierarchical
+clustering on patristic distances.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloDistanceCV</span>
+
+<span class="n">cv</span> <span class="o">=</span> <span class="n">PhyloDistanceCV</span><span class="p">(</span><span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">species_names</span><span class="p">,</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">fold</span><span class="p">,</span> <span class="p">(</span><span class="n">train_idx</span><span class="p">,</span> <span class="n">test_idx</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cv</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">X</span><span class="p">)):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fold </span><span class="si">{</span><span class="n">fold</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">train_idx</span><span class="p">)</span><span class="si">}</span><span class="s2"> train, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">test_idx</span><span class="p">)</span><span class="si">}</span><span class="s2"> test&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Clade-based CV:</strong> Holds out entire monophyletic clades for each fold.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloCladeCV</span>
+
+<span class="n">cv</span> <span class="o">=</span> <span class="n">PhyloCladeCV</span><span class="p">(</span><span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">species_names</span><span class="p">,</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">fold</span><span class="p">,</span> <span class="p">(</span><span class="n">train_idx</span><span class="p">,</span> <span class="n">test_idx</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cv</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">X</span><span class="p">)):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fold </span><span class="si">{</span><span class="n">fold</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">train_idx</span><span class="p">)</span><span class="si">}</span><span class="s2"> train, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">test_idx</span><span class="p">)</span><span class="si">}</span><span class="s2"> test&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 </section>
 <section id="feature-importance-finding-real-signal">
 <h2>5. Feature importance: Finding real signal<a class="headerlink" href="#feature-importance-finding-real-signal" title="Link to this heading"></a></h2>
-<p>Coming soon.</p>
+<p>Compare feature importance with and without phylogenetic correction to
+distinguish true biological signal from phylogenetic artifact.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">phylo_feature_importance</span>
+
+<span class="n">report</span> <span class="o">=</span> <span class="n">phylo_feature_importance</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">species_names</span><span class="p">,</span>
+    <span class="n">feature_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;body_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;diet_type&quot;</span><span class="p">,</span> <span class="s2">&quot;habitat&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+</pre></div>
+</div>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 </section>
-<section id="predicting-new-species">
-<h2>6. Predicting new species<a class="headerlink" href="#predicting-new-species" title="Link to this heading"></a></h2>
-<p>Coming soon.</p>
+<section id="shap-explanations">
+<h2>6. SHAP explanations<a class="headerlink" href="#shap-explanations" title="Link to this heading"></a></h2>
+<p>Use SHAP values to understand how much each feature and the phylogenetic
+correction contribute to predictions.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">,</span> <span class="n">phylo_shap</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span> <span class="n">species_names</span><span class="o">=</span><span class="n">species_names</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">phylo_shap</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">feature_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;body_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;diet_type&quot;</span><span class="p">])</span>
+
+<span class="c1"># Overall phylogenetic contribution</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Phylogenetic contribution: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">phylo_contribution</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Summary table</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+
+<span class="c1"># Visualization</span>
+<span class="n">result</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+<span class="n">result</span><span class="o">.</span><span class="n">summary_plot</span><span class="p">()</span>
+</pre></div>
+</div>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 </section>
-<section id="discordance-aware-correction">
-<h2>7. Discordance-aware correction<a class="headerlink" href="#discordance-aware-correction" title="Link to this heading"></a></h2>
-<p>Coming soon.</p>
+<section id="hyperparameter-tuning">
+<h2>7. Hyperparameter tuning<a class="headerlink" href="#hyperparameter-tuning" title="Link to this heading"></a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">PhyloGridSearchCV</span></code> or <code class="docutils literal notranslate"><span class="pre">PhyloRandomizedSearchCV</span></code> to find optimal
+hyperparameters with phylogenetic-aware cross-validation.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">treeml</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">,</span> <span class="n">PhyloGridSearchCV</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhyloRandomForestRegressor</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="n">search</span> <span class="o">=</span> <span class="n">PhyloGridSearchCV</span><span class="p">(</span>
+    <span class="n">estimator</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">param_grid</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">],</span>
+        <span class="s2">&quot;eigenvector_variance&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">],</span>
+    <span class="p">},</span>
+    <span class="n">tree</span><span class="o">=</span><span class="n">tree</span><span class="p">,</span>
+    <span class="n">species_names</span><span class="o">=</span><span class="n">species_names</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">search</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best params: </span><span class="si">{</span><span class="n">search</span><span class="o">.</span><span class="n">best_params_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best score: </span><span class="si">{</span><span class="n">search</span><span class="o">.</span><span class="n">best_score_</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
 </section>
 </section>
 
@@ -142,7 +265,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../usage/index.html" class="btn btn-neutral float-left" title="Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../change_log/index.html" class="btn btn-neutral float-right" title="Change Log" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../change_log/index.html" class="btn btn-neutral float-right" title="Change log" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
