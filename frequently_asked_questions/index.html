@@ -149,6 +149,66 @@ lineage sorting) rather than using only the species tree.</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
+<p><strong>What do the different combinations of whiten_features and include_eigenvectors do?</strong></p>
+<p>treeml's two main phylogenetic correction parameters can be combined in four ways,
+each with different implications for how phylogeny enters the model:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">whiten_features</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">include_eigenvectors</span></code></p></th>
+<th class="head"><p>Effect</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p><strong>No phylogenetic correction.</strong> Raw features only. Phylogeny is ignored entirely
+in the feature space (though phylogenetic-aware CV can still be used for honest
+evaluation). This is the standard ML baseline.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p><strong>Eigenvector augmentation only.</strong> Original features are preserved intact and
+phylogenetic eigenvectors are appended as additional columns. The model can
+learn to use phylogenetic structure as a predictor without distorting the
+original feature space. This is a lossless approach — no information is removed,
+and the model decides how much weight to give phylogenetic vs. genomic features.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p><strong>Whitening only.</strong> Features are transformed by L⁻¹X (Cholesky of VCV) to remove
+phylogenetic autocorrelation. Observations become approximately independent under
+a Brownian motion model, analogous to GLS residuals. No phylogenetic structure is
+explicitly provided to the model. This is the most aggressive correction — it
+assumes all phylogenetic structure in features is confounding.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p><strong>Whitening + eigenvector augmentation (default).</strong> Features are whitened to remove
+phylogenetic autocorrelation, then eigenvectors are appended to provide the model
+with explicit phylogenetic covariates. This is the PGLS analogue for ML — it
+separates phylogenetic structure from the features and re-introduces it as
+controlled covariates. However, the eigenvectors are a lossy approximation
+(typically capturing ~90% of phylogenetic variance), so some fine-grained
+feature-by-clade associations lost during whitening may not be fully recovered.</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Choosing the right combination</strong> depends on whether phylogenetic structure in your
+features is signal or confound for the trait you are predicting. When both features and
+trait are strongly phylogenetically conserved, whitening can remove genuine predictive
+signal. When the trait is phylogenetically labile, whitening removes confounding
+structure. Eigenvector augmentation is generally safe to include in either case since the
+model can learn to ignore uninformative eigenvectors. We recommend comparing multiple
+combinations using phylogenetic-aware CV to determine the best approach for your dataset.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
 <p><strong>Why does phylogenetic whitening sometimes hurt performance?</strong></p>
 <p>When both the trait and genomic features are strongly phylogenetically conserved (e.g.,
 Pagel's λ &gt; 0.8), the shared phylogenetic structure between features and trait is

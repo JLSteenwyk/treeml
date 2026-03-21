@@ -86,6 +86,57 @@ lineage sorting) rather than using only the species tree.
 
 |
 
+**What do the different combinations of whiten_features and include_eigenvectors do?**
+
+treeml's two main phylogenetic correction parameters can be combined in four ways,
+each with different implications for how phylogeny enters the model:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 20 60
+
+   * - ``whiten_features``
+     - ``include_eigenvectors``
+     - Effect
+   * - ``False``
+     - ``False``
+     - **No phylogenetic correction.** Raw features only. Phylogeny is ignored entirely
+       in the feature space (though phylogenetic-aware CV can still be used for honest
+       evaluation). This is the standard ML baseline.
+   * - ``False``
+     - ``True``
+     - **Eigenvector augmentation only.** Original features are preserved intact and
+       phylogenetic eigenvectors are appended as additional columns. The model can
+       learn to use phylogenetic structure as a predictor without distorting the
+       original feature space. This is a lossless approach — no information is removed,
+       and the model decides how much weight to give phylogenetic vs. genomic features.
+   * - ``True``
+     - ``False``
+     - **Whitening only.** Features are transformed by L⁻¹X (Cholesky of VCV) to remove
+       phylogenetic autocorrelation. Observations become approximately independent under
+       a Brownian motion model, analogous to GLS residuals. No phylogenetic structure is
+       explicitly provided to the model. This is the most aggressive correction — it
+       assumes all phylogenetic structure in features is confounding.
+   * - ``True``
+     - ``True``
+     - **Whitening + eigenvector augmentation (default).** Features are whitened to remove
+       phylogenetic autocorrelation, then eigenvectors are appended to provide the model
+       with explicit phylogenetic covariates. This is the PGLS analogue for ML — it
+       separates phylogenetic structure from the features and re-introduces it as
+       controlled covariates. However, the eigenvectors are a lossy approximation
+       (typically capturing ~90% of phylogenetic variance), so some fine-grained
+       feature-by-clade associations lost during whitening may not be fully recovered.
+
+**Choosing the right combination** depends on whether phylogenetic structure in your
+features is signal or confound for the trait you are predicting. When both features and
+trait are strongly phylogenetically conserved, whitening can remove genuine predictive
+signal. When the trait is phylogenetically labile, whitening removes confounding
+structure. Eigenvector augmentation is generally safe to include in either case since the
+model can learn to ignore uninformative eigenvectors. We recommend comparing multiple
+combinations using phylogenetic-aware CV to determine the best approach for your dataset.
+
+|
+
 **Why does phylogenetic whitening sometimes hurt performance?**
 
 When both the trait and genomic features are strongly phylogenetically conserved (e.g.,
