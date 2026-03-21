@@ -36,12 +36,11 @@ treeml is developed and maintained by `Jacob L. Steenwyk <https://jlsteenwyk.git
 
 |GoogleScholarSteenwyk| |GitHubSteenwyk| |TwitterSteenwyk|
 
-`Jacob L. Steenwyk <https://jlsteenwyk.github.io/>`_ is an Assistant Professor in the
-`Department of Ecology and Evolutionary Biology
-<https://www.colorado.edu/ebio/>`_ at the
-`University of Colorado Boulder <https://www.colorado.edu/>`_.
-His research focuses on understanding the evolutionary genomics of diverse organisms.
-Beyond research, Steenwyk aims to make education more accessible
+`Jacob L. Steenwyk <https://jlsteenwyk.github.io/>`_ is a Howard Hughes Medical Institute
+Gilliam fellow in the `Antonis Rokas Laboratory <https://as.vanderbilt.edu/rokaslab/>`_ at
+`Vanderbilt University <https://www.vanderbilt.edu/>`_. His research foci include understanding
+the parameters that influence genome stability, the genomics of microbial domestication, and
+the evolution of pathogenicity. Beyond research, Steenwyk aims to make education more accessible
 through diverse avenues of community engagement. Find out more information at his
 `personal website <http://jlsteenwyk.github.io/>`_.
 
