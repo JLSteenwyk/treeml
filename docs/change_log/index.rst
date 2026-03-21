@@ -6,6 +6,10 @@ Change log
 
 Major changes to treeml are summarized here.
 
+**0.1.1**
+
+- Documentation improvements and expanded FAQ
+
 **0.1.0**
 
 Initial release with:

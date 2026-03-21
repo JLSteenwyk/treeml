@@ -1,3 +1,7 @@
+## 0.1.1
+
+- Documentation improvements and expanded FAQ
+
 ## 0.1.0
 
 Initial release with:
