@@ -86,6 +86,34 @@ lineage sorting) rather than using only the species tree.
 
 |
 
+**Why does phylogenetic whitening sometimes hurt performance?**
+
+When both the trait and genomic features are strongly phylogenetically conserved (e.g.,
+Pagel's λ > 0.8), the shared phylogenetic structure between features and trait is
+genuinely predictive — not a statistical confound. Whitening with L⁻¹X removes this
+shared structure, discarding real signal. While eigenvector augmentation
+(``include_eigenvectors=True``) adds back broad phylogenetic axes, it cannot fully
+recover the fine-grained feature-by-clade associations that were destroyed by
+whitening. In empirical tests with yeast metabolic traits, eigenvectors accounted for
+only 4–8% of total model importance in phylo-corrected models, indicating they are a
+lossy approximation of the removed structure.
+
+In contrast, for traits with weaker phylogenetic signal (e.g., individual substrate
+growth rates), the phylogenetic structure in features acts more as a confound than as
+signal, and whitening can improve performance.
+
+As a practical guideline:
+
+- **Always use phylogenetic-aware CV** (``PhyloDistanceCV`` or ``PhyloCladeCV``) — this
+  provides an honest estimate of model generalization regardless of whether you whiten.
+- **Try both** ``whiten_features=True`` and ``whiten_features=False`` — the optimal
+  choice depends on how much the phylogenetic structure in features overlaps with the
+  trait signal.
+- **Traits with strong phylogenetic signal** (high λ): whitening is more likely to hurt.
+- **Traits with weak phylogenetic signal** (low λ): whitening is more likely to help.
+
+|
+
 **I am having trouble installing treeml, what should I do?**
 
 Please install treeml using a virtual environment as directed in the installation

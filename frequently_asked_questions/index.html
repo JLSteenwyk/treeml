@@ -149,6 +149,32 @@ lineage sorting) rather than using only the species tree.</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
+<p><strong>Why does phylogenetic whitening sometimes hurt performance?</strong></p>
+<p>When both the trait and genomic features are strongly phylogenetically conserved (e.g.,
+Pagel's λ &gt; 0.8), the shared phylogenetic structure between features and trait is
+genuinely predictive — not a statistical confound. Whitening with L⁻¹X removes this
+shared structure, discarding real signal. While eigenvector augmentation
+(<code class="docutils literal notranslate"><span class="pre">include_eigenvectors=True</span></code>) adds back broad phylogenetic axes, it cannot fully
+recover the fine-grained feature-by-clade associations that were destroyed by
+whitening. In empirical tests with yeast metabolic traits, eigenvectors accounted for
+only 4–8% of total model importance in phylo-corrected models, indicating they are a
+lossy approximation of the removed structure.</p>
+<p>In contrast, for traits with weaker phylogenetic signal (e.g., individual substrate
+growth rates), the phylogenetic structure in features acts more as a confound than as
+signal, and whitening can improve performance.</p>
+<p>As a practical guideline:</p>
+<ul class="simple">
+<li><p><strong>Always use phylogenetic-aware CV</strong> (<code class="docutils literal notranslate"><span class="pre">PhyloDistanceCV</span></code> or <code class="docutils literal notranslate"><span class="pre">PhyloCladeCV</span></code>) — this
+provides an honest estimate of model generalization regardless of whether you whiten.</p></li>
+<li><p><strong>Try both</strong> <code class="docutils literal notranslate"><span class="pre">whiten_features=True</span></code> and <code class="docutils literal notranslate"><span class="pre">whiten_features=False</span></code> — the optimal
+choice depends on how much the phylogenetic structure in features overlaps with the
+trait signal.</p></li>
+<li><p><strong>Traits with strong phylogenetic signal</strong> (high λ): whitening is more likely to hurt.</p></li>
+<li><p><strong>Traits with weak phylogenetic signal</strong> (low λ): whitening is more likely to help.</p></li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
 <p><strong>I am having trouble installing treeml, what should I do?</strong></p>
 <p>Please install treeml using a virtual environment as directed in the installation
 instructions. treeml requires Python &gt;= 3.11. If you are still running into issues
